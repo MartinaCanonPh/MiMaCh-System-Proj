@@ -38,10 +38,9 @@ class Map{
     public Map(Scanner in, int unitCount){
         mapping=new Entity[unitCount];
         for(int i=0; i<unitCount; i++){
-            mapping[0]=new Entity(in);
+            mapping[i]=new Entity(in);
         }
     }
-
 
     public Entity[] getMapping() {
         return this.mapping;
@@ -50,8 +49,6 @@ class Map{
     public void setMapping(Entity[] mapping) {
         this.mapping = mapping;
     }
-   
-    
 
 }
 

@@ -1,0 +1,18 @@
+The object of the intermediate competition is Mean-Max game on codingame platform. The game and all technical details are available at link: https://www.codingame.com/multiplayer/bot-programming/mean-max, where you can also develop and test your AI. In order to use the platform, you must create a group account.
+The are 5 leagues available for this game: the stronger your AI, the higher your league will be 😉 Notice that for the evaluation only the winnings against colleagues during the competition will be considered, not the position in the league! However, it is strongly suggested to at least enter the silver league.
+Each group must design and implement an AI able to play and possibly win the game and the competition.
+The intermediate competition will take place on 13/04/2022 and the project (code+presentation) must be submitted to Dr. Elena Mastria by 10/04/2022.  Participation is mandatory for the exam and projects submitted after the deadline will NOT be able to partecipate in the competition.
+Some tutoring lessons will be fixed for you to clarify any doubts, further details will be given later on.
+NOTE:
+- in order to "safely" test your AI, you can use a codingame account (even more) that is not attributable to your group. However it (they) must be privately communicated to dr. Mastria as soon as possible.
+
+Lettura della Traccia.
+Goal dell’agente: raccogliere più acqua possibile:
+-	Stare sulle pozzanghere il più a lungo possibile
+-	Passare su più pozzanghere possibili
+Possibili azioni dell’agente:
+-	Spostarsi a una certa velocità verso una certa direzione
+-	Stato di wait sulla posizione corrente
+La mappa:
+-	Mappa circolare con r=6000
+-	Ci sono 3 giocatori (noi siamo il player 0 di tipo 0 - Reaper)

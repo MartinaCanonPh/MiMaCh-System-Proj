@@ -80,6 +80,9 @@ class Entity{
         extra2 = in.nextInt();
     }
 
+    //funzione distanza tra se stesso e un x, y dato
+    //funzione è nella pozzanghera? boolean
+
     public int getUnitId() {
         return this.unitId;
     }

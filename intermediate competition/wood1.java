@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.*;
 import java.math.*;
+import java.lang.*;
 
 /**
  * Auto-generated code below aims at helping you parse
@@ -20,6 +21,7 @@ class Entity {
     int vy;
     int extra;
     int extra2;
+    int myRage;
 
     //costruttore con parametri
     public Entity(int unitId, int unitType, int player, float mass, int radius, int x, int y, int vx, int vy, int extra, int extra2) {
@@ -46,6 +48,16 @@ class Entity {
     {
         return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
     }
+    
+    int choosePosition()
+    {
+        Random r = new Random();
+        int[] arr = {0, 6000, -6000};
+        int randomIndex = r.nextInt(arr.length);
+        int randomVal = arr[randomIndex];
+
+        return randomVal;
+    }
 }
 
 class Player {
@@ -68,6 +80,11 @@ class Player {
             List<Entity> enemies=new ArrayList<Entity>();
             Entity playerEntity=new Entity();
 
+            List<Entity> tanks=new ArrayList<Entity>();
+            Entity destroyerEntity=new Entity();
+
+            Entity doofEntity=new Entity();
+
             for (int i = 0; i < unitCount; i++) {
                 int unitId = in.nextInt();
                 int unitType = in.nextInt();
@@ -87,14 +104,23 @@ class Player {
                 if(unitType==4)                
                     wrecks.add(temp);
                 
-                if(player==0)                
+                if(unitType==0 && player==0)                
                     playerEntity=temp;
                 
                 if(unitType==0 && player!=0)                
-                    enemies.add(temp);                
+                    enemies.add(temp);
+
+                if(unitType==1 && player==1)                
+                    destroyerEntity=temp;
+                
+                if(unitType==3)                
+                    tanks.add(temp);    
+
+                if(unitType==2 && player==2)
+                    doofEntity=temp;             
             }
 
-            //raggiungo la pozzanghera con distanza minima
+             //raggiungo la pozzanghera con distanza minima
             double distance=12000;
             Entity wreckMinDistance=new Entity();
             for(Entity w:wrecks)
@@ -105,13 +131,28 @@ class Player {
                     wreckMinDistance = w;
                 }
             }
+ 
+             //raggiungo il tank con distanza minima
+            double newDistance=6000;
+            Entity tankMinDistance=new Entity();
+            for(Entity t:tanks)
+            {   
+                if(newDistance > destroyerEntity.dis(t.x,t.y)-t.radius)
+                {
+                    newDistance = destroyerEntity.dis(t.x,t.y)-t.radius;
+                    tankMinDistance = t;
+                }
+            }
+
+            int xDoof = doofEntity.choosePosition();
+            int yDoof = doofEntity.choosePosition();
 
             // Write an action using System.out.println()
             // To debug: System.err.println("Debug messages...");
-            System.out.println(wreckMinDistance.x+" "+wreckMinDistance.y+" 200");
-            System.out.println("WAIT");
-            System.out.println("WAIT");
-            System.out.println("WAIT");
-        }        
+
+            System.out.println(wreckMinDistance.x+" "+wreckMinDistance.y+" 300");
+            System.out.println(tankMinDistance.x+" "+tankMinDistance.y+" 300");
+            System.out.println(xDoof+" "+yDoof+" 300");
+        }
     }
 }

@@ -90,13 +90,13 @@ class Player {
                 if(unitType==4)                
                     wrecks.add(temp);
                 
-                if(player==0)                
+                if(unitType==0 && player==0)                
                     playerEntity=temp;
                 
                 if(unitType==0 && player!=0)                
                     enemies.add(temp);
 
-                if(unitType==1 && player!=-1)                
+                if(unitType==1 && player==1)                
                     destroyerEntity=temp;
                 
                 if(unitType==3)                

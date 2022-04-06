@@ -144,15 +144,28 @@ class Player {
                 }
             }
 
-            int xDoof = doofEntity.choosePosition();
-            int yDoof = doofEntity.choosePosition();
-
-            // Write an action using System.out.println()
-            // To debug: System.err.println("Debug messages...");
-
             System.out.println(wreckMinDistance.x+" "+wreckMinDistance.y+" 300");
             System.out.println(tankMinDistance.x+" "+tankMinDistance.y+" 300");
-            System.out.println(xDoof+" "+yDoof+" 300");
+
+            int R=(int) Math.hypot(doofEntity.x, doofEntity.y);
+            if(R<5500){
+                int sinA=doofEntity.y/R;
+                int R1= 6000-R;
+                int angle=(int) Math.toDegrees(Math.asin(sinA));
+                int x1=(int) ((Math.cos(Math.toRadians(angle)))*R1);
+                int y1=(int) ((Math.sin(Math.toRadians(angle)))*R1);
+
+                System.out.println((x1+doofEntity.x) + " " + (y1+doofEntity.y) + " 300");
+            }
+            else{
+                int sinA=doofEntity.y/R;
+                int angle=(int) Math.toDegrees(Math.asin(sinA))+30;
+                int x1=(int) ((Math.cos(Math.toRadians(angle)))*R);
+                int y1=(int) ((Math.sin(Math.toRadians(angle)))*R);
+                System.out.println(x1+ " " + y1 + " 300");
+            }
+            // Write an action using System.out.println()
+            // To debug: System.err.println("Debug messages...");
         }
     }
 }

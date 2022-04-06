@@ -111,7 +111,7 @@ class Player {
                 if(unitType==1 && player!=-1)                
                     destroyerEntity=temp;
                 
-                if(unitType==2)                
+                if(unitType==3)                
                     tanks.add(temp);                 
             }
 
@@ -132,9 +132,9 @@ class Player {
             Entity tankMinDistance=new Entity();
             for(Entity t:tanks)
             {   
-                if(newDistance > destroyerEntity.distance(t.x,t.y))
+                if(newDistance >= destroyerEntity.distance(t.x,t.y)+t.radius)
                 {
-                    distance = destroyerEntity.distance(t.x,t.y);
+                    newDistance = destroyerEntity.distance(t.x,t.y)+t.radius;
                     tankMinDistance = t;
                 }
             }

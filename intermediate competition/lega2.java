@@ -130,7 +130,7 @@ class Player {
              // Write an action using System.out.println()
             // To debug: System.err.println("Debug messages...");
 
-            System.out.println(wreckMinDistance.x+" "+wreckMinDistance.y+" 200");
+            System.out.println(wreckMinDistance.x+" "+wreckMinDistance.y+" 300");
             System.out.println(tankMinDistance.x+" "+tankMinDistance.y+" 300");
             System.out.println("WAIT");
         }        

@@ -116,13 +116,13 @@ class Player {
             }
 
             //raggiungo il tank con distanza minima
-            double newDistance=12000;
+            double newDistance=6000;
             Entity tankMinDistance=new Entity();
             for(Entity t:tanks)
             {   
-                if(newDistance > destroyerEntity.dis(t.x,t.y)+t.radius)
+                if(newDistance > destroyerEntity.dis(t.x,t.y)-t.radius)
                 {
-                    newDistance = destroyerEntity.dis(t.x,t.y)+t.radius;
+                    newDistance = destroyerEntity.dis(t.x,t.y)-t.radius;
                     tankMinDistance = t;
                 }
             }

@@ -42,21 +42,9 @@ class Entity {
 
     }
 
-    double distance(int x2,int y2)
+    double dis(int x2,int y2)
     {
-        int resX=this.x-x2;
-
-        if(resX<0)
-            resX=resX*-1;
-        resX=resX*resX;
-        int resY=this.y-y2;
-
-        if(resY<0)
-            resY=resY*-1;
-        resY=resY*resY;
-        int result=resX+resY;
-
-        return java.lang.Math.sqrt(result);
+        return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
     }
 }
 
@@ -111,9 +99,9 @@ class Player {
             Entity wreckMinDistance=new Entity();
             for(Entity w:wrecks)
             {   
-                if(distance > playerEntity.distance(w.x,w.y))
+                if(distance > playerEntity.dis(w.x,w.y))
                 {
-                    distance = playerEntity.distance(w.x,w.y);
+                    distance = playerEntity.dis(w.x,w.y);
                     wreckMinDistance = w;
                 }
             }
@@ -125,15 +113,5 @@ class Player {
             System.out.println("WAIT");
             System.out.println("WAIT");
         }        
-    }
-
-    static boolean enemiesOnWreck(Entity wreck,List<Entity> enemies)
-    {
-        for(Entity e:enemies)
-        {        
-            if(wreck.distance(e.x,e.y)+e.radius<wreck.radius);  //??? da controllare e riscrivere
-                return true;
-        }        
-        return false;        
     }
 }

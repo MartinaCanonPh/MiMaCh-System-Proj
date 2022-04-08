@@ -111,7 +111,6 @@ class Player {
             System.out.println(wreckMinDistance.x+" "+wreckMinDistance.y+" 200");
             System.out.println("WAIT");
             System.out.println("WAIT");
-            System.out.println("WAIT");
         }        
     }
 }

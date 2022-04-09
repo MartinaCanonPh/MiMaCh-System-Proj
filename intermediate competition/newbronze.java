@@ -49,11 +49,11 @@ class Entity {
         return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
     }
 
-    Entity near(List<Entity> entities)
+    Entity near(List<Entity> entities, int d)
     {
         for(Entity e:entities)
         {
-            if(this.distance(e.x,e.y)<=3000)
+            if(this.distance(e.x,e.y)<=d)
                 return e;
         }
         return null;
@@ -91,14 +91,6 @@ class Entity {
         return null;
     }
 
-    Entity wreckOfTheEnemy(List<Entity> wrecks)
-    {
-        for(Entity e:wrecks)
-            if(this.distance(e.x, e.y)<=e.radius)
-                return e;
-        return null;
-    }
-
     int howManyOnWreck(List<Entity> entities)
     {
         int count = 0;
@@ -127,9 +119,55 @@ class Entity {
         }
         return minEntity;
     }
+
+	public Entity rightWreck(List<Entity> wrecks, List<Entity> tanks, List<Entity> destroyers, List<Entity> doofs, int unitCount) {
+        Entity wreck=this.minDistanceEntity(wrecks, 12000, -1);
+
+        int countMin=unitCount;
+        Entity wreckMinEntities=null;
+        for(Entity w:wrecks)
+        {
+            int countEntities=w.howManyOnWreck(tanks)+w.howManyOnWreck(destroyers)+w.howManyOnWreck(doofs);
+            if(countEntities<countMin)
+            {
+                countMin=countEntities;
+                wreckMinEntities=w;
+            }
+        }
+        if(wreckMinEntities.equals(wreck))
+        {
+            return wreck;
+        }
+        else
+		    return null;
+	}
 }
 
 class Player {
+
+    public static Entity wreckWithMoreWrecks(List<Entity> wrecks)
+    {
+        //System.err.println("sto calcolando");
+        int countMax=0;
+        Entity wreckToReturn=null;
+        for(Entity w:wrecks)
+        {
+            int count=0;
+            for(Entity w2:wrecks)
+            {
+                if(w.distance(w2.x, w2.y)<=w.radius)
+                    count++;
+            }
+            count--;
+            if(count>countMax)
+            {
+                countMax=count;
+                wreckToReturn=w;
+            }
+        }
+        //System.err.println("ho calcolato");
+        return wreckToReturn;
+    }
 
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
@@ -172,9 +210,10 @@ class Player {
                 //adding a new Entity temp in the new structures
                 Entity temp=new Entity(unitId,unitType,player,mass,radius,x,y,vx,vy,extra,extra2);
 
-                if(unitType==4)                
+                if(unitType==4)
+                {             
                     wrecks.add(temp);
-                
+                }
                 else if(unitType==3)
                     tanks.add(temp);
                 
@@ -182,11 +221,11 @@ class Player {
                 {               
                     enemies.add(temp);
                 }
-                else if(unitType==1 && unitId!=1)
+                else if(unitType==1)
                 {
                     destroyers.add(temp);
                 }
-                else if(unitType==2 && unitId!=2)
+                else if(unitType==2)
                 {
                     doofs.add(temp);
                 }
@@ -198,49 +237,65 @@ class Player {
                     doofEntity=temp;
      
             }
-            
+            float a = 300*(1-0.2f); //???
             //COMPORTAMENTO DEL PLAYER
             //raggiungo la pozzanghera con distanza minima, senza nemici o senza tanks
             if(!wrecks.isEmpty())
             {
-                int sum=0;
+                //int sum=0;
                 if(!playerEntity.playerOnWreck(wrecks))
                 {
                     Entity wreckMinDistanceFromPlayer=playerEntity.minDistanceEntity(wrecks, 12000, -1);
-                    sum=wreckMinDistanceFromPlayer.howManyOnWreck(tanks)+wreckMinDistanceFromPlayer.howManyOnWreck(destroyers)+wreckMinDistanceFromPlayer.howManyOnWreck(doofs);
-                    //System.err.println("conteggio "+sum);
-                    if(sum<3)
-                        System.out.println(wreckMinDistanceFromPlayer.x+" "+wreckMinDistanceFromPlayer.y+" 300");
+                    //sum=wreckMinDistanceFromPlayer.howManyOnWreck(tanks)+wreckMinDistanceFromPlayer.howManyOnWreck(destroyers)+wreckMinDistanceFromPlayer.howManyOnWreck(doofs);                    
+                    Entity wreckToChoose=playerEntity.rightWreck(wrecks,tanks,destroyers,doofs,unitCount);
+                    Entity wreck2 = wreckWithMoreWrecks(wrecks);
+                    
+                    if(wreck2!=null)
+                        System.out.println(wreck2.x+" "+wreck2.y+" 300");
+                    else if(wreckToChoose!=null)
+                    {
+                        System.out.println(wreckToChoose.x+" "+wreckToChoose.y+" 300");
+                    }
                     else
-                        System.out.println("0 0 300");
+                        System.out.println(wreckMinDistanceFromPlayer.x+" "+wreckMinDistanceFromPlayer.y+" 300");
                 }
                 else
                 {
-                    System.out.println(playerEntity.x+" "+playerEntity.y+" 10");
+                    System.out.println(playerEntity.x+" "+playerEntity.y+" 200");
                 }
             }
             else
-                System.out.println("0 0 300");
+                System.out.println(destroyerEntity.x+" "+destroyerEntity.y+" 300");
 
             
             //COMPORTAMENTO DEL DESTROYER
-            Entity tankMinDistanceFromDestroyer=destroyerEntity.minDistanceEntity(tanks, 12000, 0);
+            Entity doofMinDistanceFromDestroyer = destroyerEntity.minDistanceEntity(doofs, 12000, 0);
 
-            if(myRage>=120 && playerEntity.distance((enemies.get(1).x),(enemies.get(1).y))>1000 && enemies.get(1).wreckOfTheEnemy(wrecks)!=null)
+            Entity tankMinDistanceFromDestroyer=destroyerEntity.minDistanceEntity(tanks, 12000, 0);
+            int newX = (enemies.get(1).x+300)+enemies.get(1).vx;
+            int newY = (enemies.get(1).y+300)+enemies.get(1).vy;
+            if(myRage>=160 && playerEntity.distance(newX, newY)>1000)// && destroyerEntity.distance((enemies.get(1).x), enemies.get(1).y)<(2000-destroyerEntity.radius))
             {
-                int newX = (enemies.get(1).x+300)+enemies.get(1).vx;
-                int newY = (enemies.get(1).y+300)+enemies.get(1).vy;
                 System.out.println("SKILL "+newX+" "+newY);
             }
-            else if(tankMinDistanceFromDestroyer!=null && !tanks.isEmpty() && tankMinDistanceFromDestroyer.distance(0,0)<5000)
+            else if(tankMinDistanceFromDestroyer!=null && tankMinDistanceFromDestroyer.distance(0,0)<5000)
             {
                 System.out.println(tankMinDistanceFromDestroyer.x+" "+tankMinDistanceFromDestroyer.y+" 300");
             }
             else
-                System.out.println("300 300 300");
-            
+            {
+                System.out.println(doofMinDistanceFromDestroyer.x+" "+doofMinDistanceFromDestroyer.y+" 300");
+            }
+
             //COMPORTAMENTO DEL DOOF
-            System.out.println(enemies.get(0).x+" "+enemies.get(0).y+" 300");
+            int X = (enemies.get(0).x+300)+enemies.get(0).vx;
+            int Y = (enemies.get(0).y+300)+enemies.get(0).vy;
+            if(myRage>=160 && playerEntity.distance(X,Y)>1000)// && doofEntity.distance((enemies.get(0).x), enemies.get(0).y)<(2000-doofEntity.radius))
+            {
+                System.out.println("SKILL "+X+" "+Y);
+            }
+            else
+                System.out.println(enemies.get(0).x+" "+enemies.get(0).y+" 300");
 
         }
     }

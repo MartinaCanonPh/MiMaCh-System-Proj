@@ -42,6 +42,7 @@ class Entity {
 
     }
 
+    //calcolo della distanza tra due punti
     double dis(int x2,int y2)
     {
         return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
@@ -84,14 +85,14 @@ class Player {
                 //adding a new Entity temp in the new structures
                 Entity temp=new Entity(unitId,unitType,player,mass,radius,x,y,vx,vy,extra,extra2);
 
-                if(unitType==4)                
+                if(unitType==4)                            
                     wrecks.add(temp);
+                               
+                else if(unitType==0 && unitId!=0)                                
+                    enemies.add(temp);
                 
-                if(unitType==0 && player==0)                
-                    playerEntity=temp;
-                
-                if(unitType==0 && player!=0)                
-                    enemies.add(temp);                
+                else if(unitType==0 && unitId==0)
+                    playerEntity=temp;              
             }
 
             //raggiungo la pozzanghera con distanza minima

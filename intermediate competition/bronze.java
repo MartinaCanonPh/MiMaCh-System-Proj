@@ -4,8 +4,8 @@ import java.math.*;
 import java.lang.*;
 
 /**
- * Auto-generated code below aims at helping you parse
- * the standard input according to the problem statement.
+ * La Classe Entity serve per assegnare le variabili 
+ * ad ogni entità in gioco: wreck, tanks, ecc.
  **/
 class Entity {
 
@@ -180,65 +180,77 @@ class Player {
                 //adding a new Entity temp in the new structures
                 Entity temp=new Entity(unitId,unitType,player,mass,radius,x,y,vx,vy,extra,extra2);
 
+                //lista delle pozzanghere
                 if(unitType==4)                             
                     wrecks.add(temp);
-                
+                //lista dei tanks
                 else if(unitType==3)
                     tanks.add(temp);
-                
+                //lista delle auto nemiche
                 else if(unitType==0 && unitId!=0)                               
                     enemies.add(temp);
-                
+                //lista dei destroyer nemici
                 else if(unitType==1)                
                     destroyers.add(temp);
-                
+                //lista dei doof nemici
                 else if(unitType==2)                
                     doofs.add(temp);
-                
+                //auto del giocatore
                 else if(unitType==0 && unitId==0)
                     playerEntity=temp;
-
+                //destroyer del giocatore
                 else if(unitType==1 && unitId==1)
                     destroyerEntity=temp;
-
+                //doof del giocatore
                 else if(unitType==2 && unitId==2)
                     doofEntity=temp;
      
             }
             
-            //COMPORTAMENTO DEL PLAYER
+            //COMPORTAMENTO DELL'AUTO DEL PLAYER
+            //se non ci sono pozzanghere nell'arena 
+            //allora insegue il proprio destoyer
             if(!wrecks.isEmpty())
             {
+                //l'auto del player sceglie verso quale pozzanghera dirigersi
                 if(!playerEntity.playerOnWreck(wrecks))
                 {
                     Entity wreckMinDistanceFromPlayer=playerEntity.minDistanceEntity(wrecks, 12000, -1);                    
                     Entity wreckToChoose=playerEntity.rightWreck(wrecks,tanks,destroyers,doofs,unitCount);
                     Entity wreck2 = wreckWithMoreWrecks(wrecks);
-                    
+                    //si dà priorità alle pozzanghere sovrapposte per raccogliere più acqua
                     if(wreck2!=null)
                         System.out.println(wreck2.x+" "+wreck2.y+" 300");
-
+                    //se non ci sono pozzanghere sovrapposte, l'auto del player cerca la pozzanghera con meno entità sopra di essa e alla distanza minore
                     else if(wreckToChoose!=null)                    
                         System.out.println(wreckToChoose.x+" "+wreckToChoose.y+" 300");
-                    
+                    //se tutte le pozzanghere sono occupate l'auto del player dirigerà verso la pozzanghera più vicina
                     else
                         System.out.println(wreckMinDistanceFromPlayer.x+" "+wreckMinDistanceFromPlayer.y+" 300");
                 }
                 else                
                     System.out.println(playerEntity.x+" "+playerEntity.y+" 200");                
             }
+            //se l'auto del player si trova su una pozzagnhera vi ci resta
             else
                 System.out.println(destroyerEntity.x+" "+destroyerEntity.y+" 300");
             
+
+
             //COMPORTAMENTO DEL DESTROYER
             Entity doofMinDistanceFromDestroyer = destroyerEntity.minDistanceEntity(doofs, 12000, 0);
             Entity tankMinDistanceFromDestroyer=destroyerEntity.minDistanceEntity(tanks, 12000, 0);
+            //posizione futura di un'auto nemica 
             int newX = (enemies.get(1).x+300)+enemies.get(1).vx;
             int newY = (enemies.get(1).y+300)+enemies.get(1).vy;
 
+            // il destroyer usa la sua skill se abbiamo un certo livello di rage e
+            // l'auto del player si trova al di fuori del raggio della skill
             if(myRage>=160 && playerEntity.distance(newX, newY)>1000)            
                 System.out.println("SKILL "+newX+" "+newY);
             
+            // se è presente un tank all'interno dell' arena, il destroyer lo insegue
+            // altrimeni va ad ostacolare il movimento di un doof nemico
             else if(tankMinDistanceFromDestroyer!=null && tankMinDistanceFromDestroyer.distance(0,0)<5000)            
                 System.out.println(tankMinDistanceFromDestroyer.x+" "+tankMinDistanceFromDestroyer.y+" 300");
             
@@ -246,12 +258,15 @@ class Player {
                 System.out.println(doofMinDistanceFromDestroyer.x+" "+doofMinDistanceFromDestroyer.y+" 300");            
 
             //COMPORTAMENTO DEL DOOF
+            //posizione futura di un'auto nemica 
             int X = (enemies.get(0).x+300)+enemies.get(0).vx;
             int Y = (enemies.get(0).y+300)+enemies.get(0).vy;
 
+            // il doof usa la sua skill se abbiamo un certo livello di rage e
+            // l'auto del player si trova al di fuori del raggio della skill
             if(myRage>=160 && playerEntity.distance(X,Y)>1000)            
                 System.out.println("SKILL "+X+" "+Y);
-            
+            //altrimeni andrà ad ostacolare i movimenti di un' auto nemica
             else
                 System.out.println(enemies.get(0).x+" "+enemies.get(0).y+" 300");
         }

@@ -1,4 +1,4 @@
-public import java.util.*;
+import java.util.*;
 import java.io.*;
 import java.math.*;
 import java.lang.*;

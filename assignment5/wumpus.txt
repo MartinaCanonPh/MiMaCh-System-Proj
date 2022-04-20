@@ -1,0 +1,17 @@
+playerPos(1,1).
+
+visited(X,Y):-playerPos(X,Y).
+
+possibleChoice(X,Y):-playerPos(X,Q), Y=Q+1, Y<=4, not visited(X,Y).
+possibleChoice(X,Y):-playerPos(X,Q), Y=Q-1, Y>=1, not visited(X,Y).
+possibleChoice(X,Y):-playerPos(Q,Y), X=Q+1, X<=4, not visited(X,Y).
+possibleChoice(X,Y):-playerPos(Q,Y), X=Q-1, X>=1, not visited(X,Y).
+
+playerPos(X,Y) | out(X,Y):- possibleChoice(X,Y).
+
+safe(X,Y):-visited(X,Y), not stench(X,Y), not breeze(X,Y).
+
+:~#count{X,Y: playerPos(X,Y)}!=1. [1@2, X,Y]
+:~playerPos(X,Y), not safe(X,Y). [1@1, X,Y]
+
+gold(X,Y):-glitter(X,Y), playerPos(X,Y).

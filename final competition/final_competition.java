@@ -19,7 +19,7 @@ class Pellet{
 }
 
 class Map{
-    chat[][] mappa;
+    char[][] mappa;
     //int[][] mappa;
     int width;
     int height;
@@ -80,7 +80,7 @@ class Map{
     }
 
     void stampa(){
-        for(i=0; i<height; i++)
+        for(int i=0; i<height; i++)
         System.err.println(mappa[i]);
     }
 
@@ -213,7 +213,6 @@ class GameManager{
         //TODO
     }
 }
-
 
 class Player {
 

@@ -141,6 +141,7 @@ class Pacman{
                 this.action="MOVE";
             }
         }
+        //System.err.println(this.pacId+" "+this.choice.direction);
     }
     
     void tryToWin(Pacman oppo) {
@@ -320,6 +321,7 @@ class GameManager{
                 i++;
             }
         }
+        this.stampaMappa();
     }
 
     void chooseDirection(){
@@ -330,9 +332,11 @@ class GameManager{
 
     void checkForNull(){
         for(Pacman p: myPacmans){
-            if(p.choice==null && p.abilityCooldown==0)
-            	p.action="SPEED "+Integer.toString(p.pacId);
-            else
+            // if(p.choice==null && p.abilityCooldown==0)
+            // 	p.action="SPEED "+Integer.toString(p.pacId);
+            // else
+            //     explore(p);
+            if(p.choice==null)
                 explore(p);
         }
     }
@@ -361,18 +365,19 @@ class GameManager{
             cell=new ArrayList<Cell>();
 
             for(Cell po: temp){
-                if(presente(cell, po))
-                    temp.remove(po);
-                else if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
+
+                if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
                     p.explore=new Cell(po.x, po.y);
+                    if(p.explore == null)
+                        System.err.println("IO ho null: "+p.pacId);
                     found=true;
                 }
+                else if(presente(visited, po)==false)
+                    cell.add(po);
             }
-            cell=temp;
+            //cell=temp;            
         }
         p.action="MOVE";
-
-
     }
 
     boolean presente(ArrayList<Cell> cell, Cell c){
@@ -440,9 +445,12 @@ class GameManager{
             	if(p.action.equals("MOVE")) {
             		temp+="| " + p.action+ " " + Integer.toString(p.pacId) + " ";
 
-                    if(p.choice==null)
+                    if(p.choice==null){
+                        if(p.explore==null)
+                            System.err.println("SONO IO: "+p.pacId);
                         temp+=Integer.toString(p.explore.x) + " " + Integer.toString(p.explore.y) + " ";
 
+                    }
                     else if(p.choice.direction.equals("up"))
                         temp+=Integer.toString(p.x) + " " + Integer.toString(Math.floorMod(p.y-1, board.height)) + " ";
                     
@@ -543,8 +551,9 @@ class Player {
                 gm.addvisible(p);
 
             }
+            
             gm.play();
-            gm.stampaMappa();
+            
             // Write an action using System.out.println()
             // To debug: System.err.println("Debug messages...");
 

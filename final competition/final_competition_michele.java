@@ -117,7 +117,9 @@ class Pacman{
     ArrayList<Direction> possiblesMoves;
     Direction choice;
     Cell explore;
-    String action;
+    String action; //agiungere una variabile intera pe ril controllo in gen output e non usare la stringa stessa.
+    String switchTo;
+    boolean iChoose;
 
     public Pacman(int pacId, int x, int y, String typeId, int speedTurnsLeft, int abilityCooldown) {
         this.pacId = pacId;
@@ -130,27 +132,44 @@ class Pacman{
         choice=null;
         explore=null;
         action="";
+        switchTo="";
+        iChoose=false;
+
     }
 
     void bestDirection(){
         double max=0.0f;
         for(Direction d: possiblesMoves){
+            System.err.println(" verso " + d.direction+" il rapporto è"+d.pointsOnTime);
             if(d.pointsOnTime>max){
                 max=d.pointsOnTime;
                 this.choice=d;
                 this.action="MOVE";
+                this.iChoose=true;
             }
         }
-        //System.err.println(this.pacId+" "+this.choice.direction);
+        if(this.choice==null)
+            System.err.println(" e non ho scelto nulla ");
+        else
+            System.err.println(" e vado verso " + this.choice.direction);
     }
     
     void tryToWin(Pacman oppo) {
-    	if(oppo.typeId.equals("SCISSORS"))    	
-    		this.action="SWITCH " +Integer.toString(this.pacId)+" ROCK";
-    	else if(oppo.typeId.equals("ROCK"))
-    		this.action="SWITCH " +Integer.toString(this.pacId)+" PAPER";
-    	else if(oppo.typeId.equals("PAPER"))
-    		this.action="SWITCH " +Integer.toString(this.pacId)+" SCISSORS";
+    	if(oppo.typeId.equals("SCISSORS")){
+            this.action="SWITCH";
+            this.switchTo="ROCK";
+        }    	
+    		
+    	else if(oppo.typeId.equals("ROCK")){
+            this.action="SWITCH";
+            this.switchTo="PAPER";
+        }
+    		
+    	else if(oppo.typeId.equals("PAPER")){
+            this.action="SWITCH";
+            this.switchTo="SCISSORS";
+        }
+    		
     }
 }
 
@@ -170,6 +189,21 @@ class Direction{
 
     void setPointsOnTime(int points, int time){
         pointsOnTime=(Double)pointsOnTime/time;
+    }
+
+    void setDirection(Pacman my, Pacman op){
+        if(my.y==op.y){
+            if(my.x-op.x>=1)
+                direction="left";
+            else
+                direction="right";
+        }
+        else if(my.x==op.y){
+            if(my.y-op.y>=1)
+                direction="up";
+            else
+                direction="down";
+        }
     }
 }
 
@@ -231,7 +265,9 @@ class GameManager{
     }
 
     void updateMap(){
+
         for(Pacman p: myPacmans){
+            System.err.println("Sono p"+p.pacId+" e sono in update map");
             board.mappa[p.y][p.x]='X';
             boolean up=true, down=true, right=true, left=true;
             int pointsUp=0, pointsDown=0, pointsRight=0, pointsLeft=0;
@@ -240,10 +276,11 @@ class GameManager{
                 
                 if(up){
                     int y=Math.floorMod(p.y - i, board.height);
-
+                    //System.err.println(" la mia Y e "+ p.y + " in MOD è " + y);
                     if(board.mappa[y][p.x]=='#'){
                         up=false;
                         p.possiblesMoves.add(new Direction("up", pointsUp, i));
+                        System.err.println(" e vedo sopra di me " + pointsUp + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[y][p.x]=='o' || board.mappa[y][p.x]=='O') && board.checkPellet(p.x, y)==false){
@@ -261,10 +298,11 @@ class GameManager{
     
                 if(down){
                     int y=Math.floorMod(p.y + i, board.height);
-
+                    //System.err.println(" la mia Y e " +p.y + " in MOD è " + y);
                     if(board.mappa[y][p.x]=='#'){
                         down=false;
                         p.possiblesMoves.add(new Direction("down", pointsDown, i));
+                        System.err.println(" e vedo sotto di me " + pointsDown + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[y][p.x]=='o' || board.mappa[y][p.x]=='O') && board.checkPellet(p.x, y)==false){
@@ -281,10 +319,11 @@ class GameManager{
     
                 if(right){
                     int x=Math.floorMod(p.x + i, board.width);
-
-                    if(board.mappa[p.y][x]=='#'){
+                    //System.err.println(" la mia X e " +p.x + " in MOD è " + x);
+                    if(board.mappa[p.y][x]=='#' || x==p.x){
                         right=false;
                         p.possiblesMoves.add(new Direction("right", pointsRight, i));
+                        System.err.println(" e vedo a destra " + pointsRight + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[p.y][x]=='o' || board.mappa[p.y][x]=='O') && board.checkPellet(x, p.y)==false){
@@ -301,10 +340,11 @@ class GameManager{
     
                 if(left){
                     int x=Math.floorMod(p.x - i, board.width);
-
-                    if(board.mappa[p.y][x]=='#'){
+                   // System.err.println(" la mia X e " +p.x + " in MOD è " + x);
+                    if(board.mappa[p.y][x]=='#' || x==p.x){
                         left=false;
                         p.possiblesMoves.add(new Direction("left", pointsLeft, i));
+                        System.err.println(" e vedo a sinistra " + pointsLeft + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[p.y][x]=='o' || board.mappa[p.y][x]=='O') && board.checkPellet(x, p.y)==false){
@@ -321,28 +361,30 @@ class GameManager{
                 i++;
             }
         }
-        this.stampaMappa();
     }
 
     void chooseDirection(){
         for(Pacman p: myPacmans){
+             System.err.println("Sono p"+p.pacId+" e sono in choose direction");
             p.bestDirection();
         }
     }
 
     void checkForNull(){
         for(Pacman p: myPacmans){
-            // if(p.choice==null && p.abilityCooldown==0)
-            // 	p.action="SPEED "+Integer.toString(p.pacId);
-            // else
-            //     explore(p);
-            if(p.choice==null)
-                explore(p);
+             System.err.println("Sono p"+p.pacId+" e sono in check for null e la mia bilita ha " + p.abilityCooldown);
+            if(p.iChoose==false){
+                if(p.abilityCooldown==0)
+            	    p.action="SPEED";
+                else
+                    explore(p);
+            }
         }
     }
     
 
     void explore(Pacman p){
+         System.err.println("Sono p"+p.pacId+" e sono in explore");/*
         ArrayList<Cell> cell = new ArrayList<Cell>();
         ArrayList<Cell> visited = new ArrayList<Cell>();
         cell.add(new Cell(p.x, p.y));
@@ -365,19 +407,62 @@ class GameManager{
             cell=new ArrayList<Cell>();
 
             for(Cell po: temp){
-
+                /*if(presente(visited, po))
+                    temp.remove(po);
+                else if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
+                    p.explore=new Cell(po.x, po.y);
+                    found=true;
+                }*//* 
                 if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
                     p.explore=new Cell(po.x, po.y);
-                    if(p.explore == null)
-                        System.err.println("IO ho null: "+p.pacId);
                     found=true;
                 }
                 else if(presente(visited, po)==false)
                     cell.add(po);
+
             }
-            //cell=temp;            
+            //cell=temp;
+        }
+        p.action="MOVE"; */
+
+        boolean found=false;
+        for(int i=1; i<board.width && found==false; i++){
+            if(p.y-i>=0 && (board.mappa[p.y-i][p.x]=='o' || board.mappa[p.y-i][p.x]=='O' || board.mappa[p.y-i][p.x]==' ')){
+                p.explore=new Cell(p.x, p.y-i);
+                found=true;
+            }
+            else if(p.y+i<board.height && (board.mappa[p.y+i][p.x]=='o' || board.mappa[p.y+i][p.x]=='O' || board.mappa[p.y+i][p.x]==' ')){
+                p.explore=new Cell(p.x, p.y+i);
+                found=true;
+            }
+            else if(p.x-i>=0 && (board.mappa[p.y][p.x-i]=='o' || board.mappa[p.y][p.x-i]=='O' || board.mappa[p.y][p.x-i]==' ')){
+                p.explore=new Cell(p.x-i, p.y);
+                found=true;
+            }
+            else if(p.x+i<board.width && (board.mappa[p.y][p.x+i]=='o' || board.mappa[p.y][p.x+i]=='O' || board.mappa[p.y][p.x+i]==' ')){
+                p.explore=new Cell(p.x+i, p.y);
+                found=true;
+            }
+            else if(p.y-i>=0 && p.x-i>=0 && (board.mappa[p.y-i][p.x-i]=='o' || board.mappa[p.y-i][p.x-i]=='O' || board.mappa[p.y-i][p.x-i]==' ')){
+                p.explore=new Cell(p.x-i, p.y-i);
+                found=true;
+            }
+            else if(p.y+i<board.height && p.x+i<board.width && (board.mappa[p.y+i][p.x+i]=='o' || board.mappa[p.y+i][p.x+i]=='O' || board.mappa[p.y+i][p.x+i]==' ')){
+                p.explore=new Cell(p.x+i, p.y+i);
+                found=true;
+            }
+            else if(p.y-i>=0 && p.x+i<board.width && (board.mappa[p.y-i][p.x+i]=='o' || board.mappa[p.y-i][p.x+i]=='O' || board.mappa[p.y-i][p.x+i]==' ')){
+                p.explore=new Cell(p.x+i, p.y-i);
+                found=true;
+            }
+            else if(p.y+i<board.height && p.x-i>=0 && (board.mappa[p.y+i][p.x-i]=='o' || board.mappa[p.y+i][p.x-i]=='O' || board.mappa[p.y+i][p.x-i]==' ')){
+                p.explore=new Cell(p.x-i, p.y+i);
+                found=true;
+            }
+            
         }
         p.action="MOVE";
+
     }
 
     boolean presente(ArrayList<Cell> cell, Cell c){
@@ -390,23 +475,30 @@ class GameManager{
     
     void checkForFight() {
     	for(Pacman p: myPacmans) {
+             System.err.println("Sono p"+p.pacId+" e sono in check for fight");
     		Pacman near=isOpponentNear(p);
     		if(near!=null) {
     			if(p.abilityCooldown==0 && near.abilityCooldown!=0) {
-    				if(fightResult(p, near)==1) //vittoria
+    				if(fightResult(p, near)==1){ //vittoria
     					p.action="MOVE";
+                        if(p!=null && near!=null)
+                            p.choice.setDirection(p, near);
+                    }
     				else // sconfita o pareggio
     					p.tryToWin(near);
     			}
     			else if(p.abilityCooldown==0 && near.abilityCooldown==0) {
-    				if(fightResult(p, near)==1) //vittoria
+    				if(fightResult(p, near)==1){ //vittoria
     					p.action="WAIT";
+                    }
     				else //sconfita o pareggio
-    					p.action="SPEED "+Integer.toString(p.pacId);
+    					p.action="SPEED";
     			}
     			else if(p.abilityCooldown!=0 && near.abilityCooldown!=0) {
-    				if(fightResult(p, near)==1) //vittoria
+    				if(fightResult(p, near)==1){ //vittoria
     					p.action="MOVE";
+                        p.choice.setDirection(p, near);
+                    }
     				
     			}
     		}
@@ -445,12 +537,9 @@ class GameManager{
             	if(p.action.equals("MOVE")) {
             		temp+="| " + p.action+ " " + Integer.toString(p.pacId) + " ";
 
-                    if(p.choice==null){
-                        if(p.explore==null)
-                            System.err.println("SONO IO: "+p.pacId);
+                    if(p.choice==null)
                         temp+=Integer.toString(p.explore.x) + " " + Integer.toString(p.explore.y) + " ";
 
-                    }
                     else if(p.choice.direction.equals("up"))
                         temp+=Integer.toString(p.x) + " " + Integer.toString(Math.floorMod(p.y-1, board.height)) + " ";
                     
@@ -463,20 +552,22 @@ class GameManager{
                     else if(p.choice.direction.equals("left"))
                         temp+=Integer.toString(Math.floorMod(p.x-1, board.width)) + " " + Integer.toString((p.y)) + " ";
             	}
-            	else if(p.action.substring(0, 6).equals("SWITCH")) {
-            		temp+="| " + p.action + " ";
-            	}
-            	else if(p.action.substring(0, 5).equals("SPEED")) {
-            		temp+="| " + p.action + " ";
-            	}
-            	else if(p.action.equals("WAIT")) {
+                else if(p.action.equals("WAIT")) {
             		temp+="| MOVE " + Integer.toString(p.pacId) + " ";
             		temp+=Integer.toString(p.x) + " " + Integer.toString(p.y) + " ";
-            	}               
+            	} 
+                else if(p.action.equals("SPEED")) {
+            		temp+="| " + p.action + " " + Integer.toString(p.pacId)+ " ";
+            	}
+            	else if(p.action.equals("SWITCH")) {
+            		temp+="| " + p.action + " " + Integer.toString(p.pacId)+ " " + p.switchTo + " ";
+            	}
+            	
+            	              
             }
         }
-
-        output=temp.substring(2);
+        
+        output=temp;//.substring(2);
     }
     
 
@@ -551,9 +642,8 @@ class Player {
                 gm.addvisible(p);
 
             }
-            
             gm.play();
-            
+            //gm.stampaMappa();
             // Write an action using System.out.println()
             // To debug: System.err.println("Debug messages...");
 

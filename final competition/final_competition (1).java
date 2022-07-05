@@ -171,6 +171,19 @@ class Pacman{
         }
     		
     }
+
+    void changeDirection(String notDir){
+        double max=0.0f;
+        for(Direction d: possiblesMoves){
+            System.err.println(" verso " + d.direction+" il rapporto è"+d.pointsOnTime);
+            if(d.pointsOnTime>max && d.direction,equals(notDir)==false){
+                max=d.pointsOnTime;
+                this.choice=d;
+                this.action="MOVE";
+                this.iChoose=true;
+            }
+        }
+    }
 }
 
 class Direction{
@@ -545,6 +558,21 @@ class GameManager{
     	return op;
     }
 
+    void collisionDetection(){
+        for(Pacman p1: myPacmans){
+            for(Pacman p2 : myLastPosition){
+                if(p1.pacId==p2.pacId){
+                    if(p1.x==p2.x && p1.y==p2.y){
+                        if(p1.choice.direction.equals(p2.choice.direction)){
+                            if(p2.action.equals("WAIT")==false)
+                                p1.chengeDirection(p1.choice.direction);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 
 
@@ -594,7 +622,7 @@ class GameManager{
         //osserva e scegli
         updateMap();
         chooseDirection();
-
+        collisionDetection();
         //check pacman directions
         checkForNull();
         checkForFight(); // TODO se vediamo un nemico nel corridoio entro 4/3 caselle, controllare se ha il cooldown dell'abilita' !=0 
@@ -671,3 +699,4 @@ class Player {
         }
     }
 }
+

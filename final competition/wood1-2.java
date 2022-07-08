@@ -19,17 +19,15 @@ class Pacman {
     }
 
     //costruttore senza parametri
-    public Pacman()
-    {
+    public Pacman(){ }
 
-    }
-
-    //calcolo della distanza tra due punti
+    //calcolo distanza tra due punti
     double distance(int x2,int y2)
     {
         return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
     }
 
+    //trova un pellet nell'intorno del Pacman
     Pellet findAdj(ArrayList<Pellet> pellets)
     {
         for(Pellet p : pellets)
@@ -40,9 +38,10 @@ class Pacman {
                 return p;
             }
         }
-        return pellets.get(0); //oppure, se non abbiamo vicini?
+        return pellets.get(0); //default
     }
 
+    //trova il pellet più vicino al Pacman
     Pellet findNear(ArrayList<Pellet> pellets)
     {
         Pellet minPellet = null;
@@ -74,12 +73,9 @@ class Pellet {
     }
 
     //costruttore senza parametri
-    public Pellet()
-    {
+    public Pellet(){}
 
-    }
-
-    //calcolo della distanza tra due punti
+    //calcolo distanza tra due punti
     double distance(int x2,int y2)
     {
         return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
@@ -136,9 +132,7 @@ class Player {
                 pellets.add(new Pellet(x,y,value));
             }
 
-            // Write an action using System.out.println()
-            // To debug: System.err.println("Debug messages...");
-
+            //tutti i Super Pellet
             ArrayList<Pellet> superP = new ArrayList<Pellet>();
             for(Pellet p : pellets)
             {
@@ -146,15 +140,17 @@ class Player {
                     superP.add(p);
             }
 
+            //super Pellet più vicini al Pacman, per ogni Pacman
             ArrayList<Pellet> firstSuperPellets = new ArrayList<Pellet>();
             for(Pacman p: myPacmans)
             {
                 Pellet firstSuperPellet = p.findNear(superP);
-                if(firstSuperPellet == null)            
+                if(firstSuperPellet == null) //se non ci sono super pellet, allora trova il pellet più vicino           
                     firstSuperPellet = p.findNear(pellets);
                 firstSuperPellets.add(firstSuperPellet);
             }
             
+            //genera output
             String output="";
             for(int i=0; i<myPacmans.size(); i++)
             {

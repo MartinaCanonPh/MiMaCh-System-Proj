@@ -1,3 +1,4 @@
+@@ -0,0 +1,763 @@
 import java.util.*;
 
 import javax.swing.text.Position;
@@ -10,14 +11,7 @@ class Cell{
     int x;
     int y;
 
-    public Cell(){}
-
     public Cell(int x, int y){
-        this.x=x;
-        this.y=y;
-    }
-
-    public void setCoord(int x, int y){
         this.x=x;
         this.y=y;
     } 
@@ -123,7 +117,7 @@ class Pacman{
     int abilityCooldown;
     ArrayList<Direction> possiblesMoves;
     Direction choice;
-    Cell explore=new Cell();
+    Cell explore;
     String action; //agiungere una variabile intera pe ril controllo in gen output e non usare la stringa stessa.
     String switchTo;
     boolean iChoose;
@@ -617,7 +611,6 @@ class GameManager{
     			else if(p.abilityCooldown==0 && near.abilityCooldown==0) {
     				if(fightResult(p, near)==1){ //vittoria
     					p.action="WAIT";
-    					p.action="SPEED";
                     }
     				else //sconfita o pareggio
     					goAway(p, near);
@@ -659,16 +652,12 @@ class GameManager{
     	return op;
     }
 
-    void genOutput(int turn){
+    void genOutput(){
         String temp="";
         for(Pacman p: myPacmans){
             if(p.typeId.equals("DEAD")==false){
+            	
             	if(p.action.equals("MOVE")) {
-
-                if(turn == 1){
-                }            	
-            	else if(p.action.equals("MOVE")) {
-
             		temp+="| " + p.action+ " " + Integer.toString(p.pacId) + " ";
 
                     if(p.choice==null){
@@ -706,8 +695,7 @@ class GameManager{
         output=temp;//.substring(2);
     }
     
-
-    void play(int turn){
+    void play(){
         //osserva e scegli
         updateMap();
         chooseDirection();
@@ -716,7 +704,7 @@ class GameManager{
         checkForFight(); // TODO se vediamo un nemico nel corridoio entro 4/3 caselle, controllare se ha il cooldown dell'abilita' !=0 
         				 //e fare la differenza fra le posizioni passate e correnti, perche' potrebbe mangiarci senza darci il tempo di trasformarci
         checkForNull();
-        genOutput(turn);
+        genOutput();
     }
 }
 
@@ -724,10 +712,8 @@ class Player {
 
     public static void main(String args[]) {
         Scanner in = new Scanner(System.in);
-
         int width = in.nextInt(); // size of the grid
         int height = in.nextInt(); // top left corner is (x=0, y=0)
-
         GameManager gm=new GameManager(width, height);
 
         if (in.hasNextLine()) {
@@ -740,50 +726,38 @@ class Player {
         gm.stampaMappa();
 
         // game loop
-        int turn=0;
         while (true) {
-            turn++;
             int myScore = in.nextInt();
             int opponentScore = in.nextInt();
             int visiblePacCount = in.nextInt(); // all your pacs and enemy pacs in sight
-
             gm.setScores(myScore, opponentScore);
-
 
             for (int i = 0; i < visiblePacCount; i++) {
                 int pacId = in.nextInt(); // pac number (unique within a team)
                 boolean mine = in.nextInt() != 0; // true if this pac is yours
                 int x = in.nextInt(); // position in the grid
                 int y = in.nextInt(); // position in the grid
-                String typeId = in.next(); // unused in wood leagues
-                int speedTurnsLeft = in.nextInt(); // unused in wood leagues
-                int abilityCooldown = in.nextInt(); // unused in wood leagues
+                String typeId = in.next();
+                int speedTurnsLeft = in.nextInt();
+                int abilityCooldown = in.nextInt();
 
                 Pacman p=new Pacman(pacId, x, y, typeId, speedTurnsLeft, abilityCooldown);
-                
                 if(mine)
                     gm.addMyPacman(p);
                 else
                     gm.addOppoPacman(p);
             }
 
-
             int visiblePelletCount = in.nextInt(); // all pellets in sight
             for (int i = 0; i < visiblePelletCount; i++) {
                 int x = in.nextInt();
                 int y = in.nextInt();
                 int value = in.nextInt(); // amount of points this pellet is worth
-
                 Pellet p=new Pellet(x, y, value);
                 gm.addvisible(p);
-
             }
-            gm.play(turn);
-            //gm.stampaMappa();
-            // Write an action using System.out.println()
-            // To debug: System.err.println("Debug messages...");
-
-            System.out.println(gm.output); // MOVE <pacId> <x> <y>
+            gm.play();
+            System.out.println(gm.output);
             gm.clearAll();
         }
     }

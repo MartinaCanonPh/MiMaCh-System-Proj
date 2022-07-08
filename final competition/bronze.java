@@ -123,7 +123,7 @@ class Pacman{
     int abilityCooldown;
     ArrayList<Direction> possiblesMoves;
     Direction choice;
-    Cell explore=new Cell();
+    Cell explore;
     String action; //agiungere una variabile intera pe ril controllo in gen output e non usare la stringa stessa.
     String switchTo;
     boolean iChoose;
@@ -195,9 +195,9 @@ class Pacman{
         //this.choice=null;
         for(Direction d: possiblesMoves){
             //System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
-            System.err.println("NOT: "+notDir);
+            //System.err.println("NOT: "+notDir);
             if(d.pointsOnTime>max && d.direction.equals(notDir)==false){
-                System.err.println("NOT: "+notDir+" NUOVA: "+d.direction);
+                //System.err.println("NOT: "+notDir+" NUOVA: "+d.direction);
                 max=d.pointsOnTime;
                 this.choice=d;
                 this.action="MOVE";
@@ -357,7 +357,7 @@ class GameManager{
                 if(right){
                     int x=Math.floorMod(p.x + i, board.width);
                     //System.err.println(" la mia X e " +p.x + " in MOD è " + x);
-                    if(board.mappa[p.y][x]=='#' || x==p.x){
+                    if(board.mappa[p.y][x]=='#'){
                         right=false;
                         p.possiblesMoves.add(new Direction("right", pointsRight, i));
                         //System.err.println(" e vedo a destra " + pointsRight + " punti in " + i + " turni");
@@ -380,7 +380,7 @@ class GameManager{
                 if(left){
                     int x=Math.floorMod(p.x - i, board.width);
                    // System.err.println(" la mia X e " +p.x + " in MOD è " + x);
-                    if(board.mappa[p.y][x]=='#' || x==p.x){
+                    if(board.mappa[p.y][x]=='#'){
                         left=false;
                         p.possiblesMoves.add(new Direction("left", pointsLeft, i));
                         //System.err.println(" e vedo a sinistra " + pointsLeft + " punti in " + i + " turni");
@@ -424,7 +424,6 @@ class GameManager{
                         {
                             System.err.println("COLLISION con my: "+p_curr.pacId+" e "+p2.pacId);
                             p2.action="WAIT";
-                            //goAway(p2, p_curr);
                             break;
                         }
                     }
@@ -549,12 +548,14 @@ class GameManager{
     }
 
     void goAway(Pacman p, Pacman near){
+        int newX=Math.floorMod(p.x-1, board.width);
+        int newX2=Math.floorMod(p.x+1, board.width);
         System.err.print("Sono p"+p.pacId+" e sono in GO AWAY");
         if(p.choice!=null)
             System.err.print(" con choice: "+p.choice.direction);
         if(p.y == near.y){
             if(p.x-near.x == -1){
-                if(board.mappa[p.y][p.x-1]!='#')
+                if(board.mappa[p.y][newX]!='#')
                     p.choice=new Direction("left", 0, 0);
                 else if(board.mappa[p.y+1][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
@@ -563,7 +564,7 @@ class GameManager{
                 p.action="MOVE";
             }
             else if(p.x-near.x == 1){
-                if(board.mappa[p.y][p.x+1]!='#')
+                if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
                 else if(board.mappa[p.y+1][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
@@ -576,18 +577,18 @@ class GameManager{
             if(p.y-near.y == -1){
                 if(board.mappa[p.y-1][p.x]!='#')
                     p.choice=new Direction("up", 0, 0);
-                else if(board.mappa[p.y][p.x+1]!='#')
+                else if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
-                else if(board.mappa[p.y][p.x-1]!='#')
+                else if(board.mappa[p.y][newX]!='#')
                     p.choice=new Direction("left", 0, 0);
                 p.action="MOVE";
             }
             else if(p.y-near.y == 1){
                 if(board.mappa[p.y+1][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
-                else if(board.mappa[p.y][p.x+1]!='#')
+                else if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
-                else if(board.mappa[p.y][p.x-1]!='#')
+                else if(board.mappa[p.y][newX]!='#')
                     p.choice=new Direction("left", 0, 0);
                 p.action="MOVE";
             }
@@ -657,7 +658,7 @@ class GameManager{
     	return op;
     }
 
-    void genOutput(int turn){
+    void genOutput(){
         String temp="";
         for(Pacman p: myPacmans){
             if(p.typeId.equals("DEAD")==false){
@@ -665,8 +666,11 @@ class GameManager{
                 if(p.action.equals("MOVE")) {
             		temp+="| " + p.action+ " " + Integer.toString(p.pacId) + " ";
 
-                    if(p.choice==null){
-                        temp+=Integer.toString(p.explore.x) + " " + Integer.toString(p.explore.y) + " EXP "+Integer.toString(p.explore.x)+"-"+Integer.toString(p.explore.y);
+                    if(p.choice==null){                        
+                        if(p.explore!=null)
+                            temp+=Integer.toString(p.explore.x) + " " + Integer.toString(p.explore.y) + " EXP "+Integer.toString(p.explore.x)+"-"+Integer.toString(p.explore.y);
+                        else
+                            temp+=Integer.toString(p.x) + " " + Integer.toString(p.y) + " ";
                     }
                     else if(p.choice.direction.equals("up")){
                         int newY=Math.floorMod(p.y-1, board.height);
@@ -701,7 +705,7 @@ class GameManager{
     }
     
 
-    void play(int turn){
+    void play(){
         //osserva e scegli
         updateMap();
         chooseDirection();
@@ -710,7 +714,7 @@ class GameManager{
         checkForFight(); // TODO se vediamo un nemico nel corridoio entro 4/3 caselle, controllare se ha il cooldown dell'abilita' !=0 
         				 //e fare la differenza fra le posizioni passate e correnti, perche' potrebbe mangiarci senza darci il tempo di trasformarci
         checkForNull();
-        genOutput(turn);
+        genOutput();
     }
 }
 
@@ -772,7 +776,7 @@ class Player {
                 gm.addvisible(p);
 
             }
-            gm.play(turn);
+            gm.play();
             //gm.stampaMappa();
             // Write an action using System.out.println()
             // To debug: System.err.println("Debug messages...");

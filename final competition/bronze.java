@@ -424,7 +424,6 @@ class GameManager{
                         {
                             System.err.println("COLLISION con my: "+p_curr.pacId+" e "+p2.pacId);
                             p2.action="WAIT";
-                            //p_curr.action="WAIT";
                             //goAway(p2, p_curr);
                             break;
                         }
@@ -617,7 +616,6 @@ class GameManager{
     			else if(p.abilityCooldown==0 && near.abilityCooldown==0) {
     				if(fightResult(p, near)==1){ //vittoria
     					p.action="WAIT";
-    					p.action="SPEED";
                     }
     				else //sconfita o pareggio
     					goAway(p, near);
@@ -663,12 +661,8 @@ class GameManager{
         String temp="";
         for(Pacman p: myPacmans){
             if(p.typeId.equals("DEAD")==false){
-            	if(p.action.equals("MOVE")) {
-
-                if(turn == 1){
-                }            	
-            	else if(p.action.equals("MOVE")) {
-
+            	
+                if(p.action.equals("MOVE")) {
             		temp+="| " + p.action+ " " + Integer.toString(p.pacId) + " ";
 
                     if(p.choice==null){

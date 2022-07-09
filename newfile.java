@@ -16,6 +16,89 @@ class Cell{
     } 
 }
 
+                        /*if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
+                    System.err.println("EXPLORE "+po.x+"-"+po.y);
+                    boolean ok=true;
+                    for(Pacman pac:myPacmans){
+                        if(pac.pacId!=p.pacId && pac.explore!= null && (pac.explore.x==po.x && pac.explore.y==po.y))
+                            ok=false;
+                    }
+                    if(ok){
+                        p.explore=new Cell(po.x, po.y);
+                        found=true;                
+                    }
+                }
+                else if(presente(visited, po)==false)
+                    cell.add(po);*/
+
+        //     for(Cell po: temp){
+        //         // if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
+        //         //     System.err.println("EXPLORE "+po.x+"-"+po.y);
+        //         //     p.explore=new Cell(po.x, po.y);
+        //         //     found=true;
+        //         // }
+        //         // else if(presente(visited, po)==false)
+        //         //     cell.add(po);
+        //         if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
+        //             System.err.println("EXPLORE "+po.x+"-"+po.y);
+        //             boolean ok=true;
+        //             for(Pacman pac:myPacmans){
+        //                 if(pac.pacId!=p.pacId && pac.explore!= null && (pac.explore.x==po.x && pac.explore.y==po.y))
+        //                     ok=false;
+        //             }
+        //             if(ok){
+        //                 goTo=new Cell(po.x,po.y);
+        //                 //p.explore=new Cell(po.x, po.y);
+        //                 found=true;                
+        //             }
+        //         }
+        //         else if(presente(visited, po)==false)
+        //             cell.add(po);
+        //         for(){
+
+        //         }
+        //     }
+
+        //     //cell=temp;
+        // }
+
+        // boolean found=false;
+        // for(int i=1; i<board.width && found==false; i++){
+        //     if(p.y-i>=0 && (board.mappa[p.y-i][p.x]=='o' || board.mappa[p.y-i][p.x]=='O' || board.mappa[p.y-i][p.x]==' ')){
+        //         p.explore=new Cell(p.x, p.y-i);
+        //         found=true;
+        //     }
+        //     else if(p.y+i<board.height && (board.mappa[p.y+i][p.x]=='o' || board.mappa[p.y+i][p.x]=='O' || board.mappa[p.y+i][p.x]==' ')){
+        //         p.explore=new Cell(p.x, p.y+i);
+        //         found=true;
+        //     }
+        //     else if(p.x-i>=0 && (board.mappa[p.y][p.x-i]=='o' || board.mappa[p.y][p.x-i]=='O' || board.mappa[p.y][p.x-i]==' ')){
+        //         p.explore=new Cell(p.x-i, p.y);
+        //         found=true;
+        //     }
+        //     else if(p.x+i<board.width && (board.mappa[p.y][p.x+i]=='o' || board.mappa[p.y][p.x+i]=='O' || board.mappa[p.y][p.x+i]==' ')){
+        //         p.explore=new Cell(p.x+i, p.y);
+        //         found=true;
+        //     }
+        //     else if(p.y-i>=0 && p.x-i>=0 && (board.mappa[p.y-i][p.x-i]=='o' || board.mappa[p.y-i][p.x-i]=='O' || board.mappa[p.y-i][p.x-i]==' ')){
+        //         p.explore=new Cell(p.x-i, p.y-i);
+        //         found=true;
+        //     }
+        //     else if(p.y+i<board.height && p.x+i<board.width && (board.mappa[p.y+i][p.x+i]=='o' || board.mappa[p.y+i][p.x+i]=='O' || board.mappa[p.y+i][p.x+i]==' ')){
+        //         p.explore=new Cell(p.x+i, p.y+i);
+        //         found=true;
+        //     }
+        //     else if(p.y-i>=0 && p.x+i<board.width && (board.mappa[p.y-i][p.x+i]=='o' || board.mappa[p.y-i][p.x+i]=='O' || board.mappa[p.y-i][p.x+i]==' ')){
+        //         p.explore=new Cell(p.x+i, p.y-i);
+        //         found=true;
+        //     }
+        //     else if(p.y+i<board.height && p.x-i>=0 && (board.mappa[p.y+i][p.x-i]=='o' || board.mappa[p.y+i][p.x-i]=='O' || board.mappa[p.y+i][p.x-i]==' ')){
+        //         p.explore=new Cell(p.x-i, p.y+i);
+        //         found=true;
+        //     }
+        // }
+        // p.action="MOVE";
+
 class Pellet{
 
     int x;

@@ -150,6 +150,11 @@ class Pacman{
         this.locked=b;
     }
 
+    double distance(int x2,int y2)
+    {
+        return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
+    }
+
     boolean isNear(Pacman p, int i){
         int d1=this.x-p.x;
         int d2=this.y-p.y;
@@ -171,6 +176,10 @@ class Pacman{
             System.err.println(" e non ho scelto nulla ");
         else
             System.err.println(" e vado verso " + this.choice.direction);
+    }
+
+    void bestDirWithSpeed(){
+        
     }
     
     void tryToWin(Pacman oppo) {
@@ -471,9 +480,9 @@ class GameManager{
     }
     
 
-    void explore(Pacman p){
-        //System.err.println("Sono p"+p.pacId+" e sono in explore");
-        
+void explore(Pacman p){
+        System.err.println("Sono p"+p.pacId+" e sono in explore");
+
         ArrayList<Cell> cell = new ArrayList<Cell>();
         ArrayList<Cell> visited = new ArrayList<Cell>();
         cell.add(new Cell(p.x, p.y));
@@ -519,44 +528,70 @@ class GameManager{
             }
             //cell=temp;
         }
-        p.action="MOVE";
+        ArrayList<Cell> celle=new ArrayList<Cell>();
+        if(p.explore!=null){
+        boolean up=true, down=true, right=true, left=true;
+        int i=1;
+            while(up || down || right || left){
+                if(up){
+                    int y=Math.floorMod(p.explore.y - i, board.height);
+                    if(board.mappa[y][p.explore.x]=='#'){
+                        up=false;
+                    }
+                    else if(board.mappa[y][p.explore.x+1]!='#' || board.mappa[y][p.explore.x-1]!='#'){
+                        celle.add(new Cell(p.explore.x, y));
+                    }
+                }
+                if(down){
+                    int y=Math.floorMod(p.explore.y + i, board.height);
+                    if(board.mappa[y][p.explore.x]=='#'){
+                        down=false;
+                    }
+                    else if(board.mappa[y][p.explore.x+1]!='#' || board.mappa[y][p.explore.x-1]!='#'){
+                        celle.add(new Cell(p.explore.x, y));
+                    }
+                }
+                if(right){
+                    int x=Math.floorMod(p.explore.x + i, board.width);
+                    if(board.mappa[p.explore.y][x]=='#'){
+                        right=false;
+                    }
+                    else if(board.mappa[p.explore.y+1][x]!='#' || board.mappa[p.explore.y-1][x]!='#'){
+                        celle.add(new Cell(x, p.explore.y));
+                    }
+                }
+                if(left){
+                    int x=Math.floorMod(p.explore.x - i, board.width);
+                    if(board.mappa[p.explore.y][x]=='#'){
+                        left=false;
+                    }
+                    else if(board.mappa[p.explore.y+1][x]!='#' || board.mappa[p.explore.y-1][x]!='#'){
+                        celle.add(new Cell(x, p.explore.y));
+                    }
+                }
 
-        // boolean found=false;
-        // for(int i=1; i<board.width && found==false; i++){
-        //     if(p.y-i>=0 && (board.mappa[p.y-i][p.x]=='o' || board.mappa[p.y-i][p.x]=='O' || board.mappa[p.y-i][p.x]==' ')){
-        //         p.explore=new Cell(p.x, p.y-i);
-        //         found=true;
-        //     }
-        //     else if(p.y+i<board.height && (board.mappa[p.y+i][p.x]=='o' || board.mappa[p.y+i][p.x]=='O' || board.mappa[p.y+i][p.x]==' ')){
-        //         p.explore=new Cell(p.x, p.y+i);
-        //         found=true;
-        //     }
-        //     else if(p.x-i>=0 && (board.mappa[p.y][p.x-i]=='o' || board.mappa[p.y][p.x-i]=='O' || board.mappa[p.y][p.x-i]==' ')){
-        //         p.explore=new Cell(p.x-i, p.y);
-        //         found=true;
-        //     }
-        //     else if(p.x+i<board.width && (board.mappa[p.y][p.x+i]=='o' || board.mappa[p.y][p.x+i]=='O' || board.mappa[p.y][p.x+i]==' ')){
-        //         p.explore=new Cell(p.x+i, p.y);
-        //         found=true;
-        //     }
-        //     else if(p.y-i>=0 && p.x-i>=0 && (board.mappa[p.y-i][p.x-i]=='o' || board.mappa[p.y-i][p.x-i]=='O' || board.mappa[p.y-i][p.x-i]==' ')){
-        //         p.explore=new Cell(p.x-i, p.y-i);
-        //         found=true;
-        //     }
-        //     else if(p.y+i<board.height && p.x+i<board.width && (board.mappa[p.y+i][p.x+i]=='o' || board.mappa[p.y+i][p.x+i]=='O' || board.mappa[p.y+i][p.x+i]==' ')){
-        //         p.explore=new Cell(p.x+i, p.y+i);
-        //         found=true;
-        //     }
-        //     else if(p.y-i>=0 && p.x+i<board.width && (board.mappa[p.y-i][p.x+i]=='o' || board.mappa[p.y-i][p.x+i]=='O' || board.mappa[p.y-i][p.x+i]==' ')){
-        //         p.explore=new Cell(p.x+i, p.y-i);
-        //         found=true;
-        //     }
-        //     else if(p.y+i<board.height && p.x-i>=0 && (board.mappa[p.y+i][p.x-i]=='o' || board.mappa[p.y+i][p.x-i]=='O' || board.mappa[p.y+i][p.x-i]==' ')){
-        //         p.explore=new Cell(p.x-i, p.y+i);
-        //         found=true;
-        //     }
-        // }
-        // p.action="MOVE";
+                i++;
+            }
+        }
+        closestCell(celle, p);
+        p.action="MOVE";           
+    }
+
+    void closestCell(ArrayList<Cell> cells, Pacman p){
+        if(cells.isEmpty()==false){
+            double minDist=p.distance(cells.get(0).x, cells.get(0).y);
+            Cell closestCell=cells.get(0);
+            for(Cell c:cells)
+            {   
+                double temp=p.distance(c.x, c.y);
+                if(temp<minDist)
+                {
+                    minDist=temp;
+                    closestCell=c;
+                }
+            }
+            p.explore=closestCell;
+        }
     }
 
     boolean presente(ArrayList<Cell> cell, Cell c){
@@ -596,8 +631,10 @@ class GameManager{
         else if(p.x == near.x){
             int newX=Math.floorMod(p.x-i, board.width);
             int newX2=Math.floorMod(p.x+i, board.width);
+            int newY=Math.floorMod(p.y-i, board.height);
+            int newY2=Math.floorMod(p.y+i, board.height);
             if(p.y-near.y == -i){
-                if(board.mappa[p.y-i][p.x]!='#')
+                if(board.mappa[newY][p.x]!='#')
                     p.choice=new Direction("up", 0, 0);
                 else if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
@@ -606,7 +643,7 @@ class GameManager{
                 p.action="MOVE";
             }
             else if(p.y-near.y == i){
-                if(board.mappa[p.y+i][p.x]!='#')
+                if(board.mappa[newY2][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
                 else if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
@@ -738,18 +775,19 @@ class GameManager{
                 p.action="SPEED";
             }
         }
-    }    
+    }
 
     void play(int turn){
         //osserva e scegli
         clearPos();
         updateMap();
         chooseDirection();
+        checkForNull();
         checkCollision();
         //check pacman directions        
         checkForFight(); // TODO se vediamo un nemico nel corridoio entro 4/3 caselle, controllare se ha il cooldown dell'abilita' !=0 
         				 //e fare la differenza fra le posizioni passate e correnti, perche' potrebbe mangiarci senza darci il tempo di trasformarci
-        checkForNull();
+
         activeSpeed();
         genOutput(turn);
     }

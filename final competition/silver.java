@@ -568,33 +568,36 @@ class GameManager{
     }
 
     void goAway(Pacman p, Pacman near){
+        int i=1;
+        if(p.speedTurnsLeft>0)
+            i=2;
         if(p.y == near.y){
-            if(p.x-near.x == -1){
-                int newX=Math.floorMod(p.x-1, board.width);
+            if(p.x-near.x == -i){
+                int newX=Math.floorMod(p.x-i, board.width);
                 if(board.mappa[p.y][newX]!='#')
                     p.choice=new Direction("left", 0, 0);
-                else if(board.mappa[p.y+1][p.x]!='#')
+                else if(board.mappa[p.y+i][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
-                else if(board.mappa[p.y-1][p.x]!='#')
+                else if(board.mappa[p.y-i][p.x]!='#')
                     p.choice=new Direction("up", 0, 0);
                 p.action="MOVE";
             }
-            else if(p.x-near.x == 1){
-                int newX=Math.floorMod(p.x+1, board.width);
+            else if(p.x-near.x == i){
+                int newX=Math.floorMod(p.x+i, board.width);
                 if(board.mappa[p.y][newX]!='#')
                     p.choice=new Direction("right", 0, 0);
-                else if(board.mappa[p.y+1][p.x]!='#')
+                else if(board.mappa[p.y+i][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
-                else if(board.mappa[p.y-1][p.x]!='#')
+                else if(board.mappa[p.y-i][p.x]!='#')
                     p.choice=new Direction("up", 0, 0);
                 p.action="MOVE";
             }
         }
         else if(p.x == near.x){
-            int newX=Math.floorMod(p.x-1, board.width);
-            int newX2=Math.floorMod(p.x+1, board.width);
-            if(p.y-near.y == -1){
-                if(board.mappa[p.y-1][p.x]!='#')
+            int newX=Math.floorMod(p.x-i, board.width);
+            int newX2=Math.floorMod(p.x+i, board.width);
+            if(p.y-near.y == -i){
+                if(board.mappa[p.y-i][p.x]!='#')
                     p.choice=new Direction("up", 0, 0);
                 else if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
@@ -602,8 +605,8 @@ class GameManager{
                     p.choice=new Direction("left", 0, 0);
                 p.action="MOVE";
             }
-            else if(p.y-near.y == 1){
-                if(board.mappa[p.y+1][p.x]!='#')
+            else if(p.y-near.y == i){
+                if(board.mappa[p.y+i][p.x]!='#')
                     p.choice=new Direction("down", 0, 0);
                 else if(board.mappa[p.y][newX2]!='#')
                     p.choice=new Direction("right", 0, 0);
@@ -665,10 +668,13 @@ class GameManager{
     
     Pacman isOpponentNear(Pacman p) {
     	Pacman op=null;
+        int i=1;
+        if(p.speedTurnsLeft>0)
+            i=2;
     	for(Pacman oppo: opponents) {
-    		if((p.y==oppo.y && (p.x+1 == oppo.x || p.x-1 == oppo.x)))
+    		if((p.y==oppo.y && (p.x+i == oppo.x || p.x-i == oppo.x)))
     			op=oppo;
-    		else if((p.x==oppo.x && (p.y+1 == oppo.y || p.y-1 == oppo.y)))
+    		else if((p.x==oppo.x && (p.y+i == oppo.y || p.y-i == oppo.y)))
     			op=oppo;
     	}
     	return op;

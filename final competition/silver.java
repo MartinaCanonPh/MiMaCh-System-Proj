@@ -405,7 +405,13 @@ class GameManager{
     }
 
 
-    /*TODO*/
+    /*confronta, per ogni pacman, la posizione corrente e quella precedente
+    se sono uguali e inoltre l'action precedente e quella attuale sono uguali a MOVE
+    allora vuol dire che il pacman è bloccato in una collisione.
+    se un pacman è bloccato controllo se è perchè ha vicino un alleato, anch'esso bloccato
+    allora l'action che secondo pacman bloccato sarà WAIT, in modo da far passare il primo.
+    Se non è bloccato da un alleato, allora il primo sarà in WAIT
+    */
     void checkCollision(){
         if(myLastPosition!=null){
             for(Pacman p_curr: myPacmans){
@@ -843,7 +849,7 @@ void explore(Pacman p){
         //checkForSuperPellets();
         checkCollision(); //verifica di collisioni
         //check pacman directions        
-        checkForFight() //verifica di possibile duello
+        checkForFight(); //verifica di possibile duello
 
         activeSpeed(); //attiva la speed se possibile
         genOutput(turn); //genera l'output

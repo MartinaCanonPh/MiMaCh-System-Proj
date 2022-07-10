@@ -5,7 +5,7 @@ import javax.swing.text.Position;
 import java.awt.Point;
 import java.io.*;
 import java.math.*;
-
+/*classe Cell per gestire le posizioni sulla mappa*/
 class Cell{
     int x;
     int y;
@@ -22,9 +22,8 @@ class Cell{
         this.y=y;
     } 
 }
-
+/*classe Pellet per gestire i pellet presenti sulla mappa*/
 class Pellet{
-
     int x;
     int y;
     int value;
@@ -38,9 +37,8 @@ class Pellet{
         this.value=value;
     }
 }
-
-class Map{
-    char[][] mappa;
+/*classe Map, gestisce la mappa come una matrice di char e i pellet visibili su di essa.*/
+class Map{ char[][] mappa;
     int width;
     int height;
     ArrayList<Pellet> visible;
@@ -52,7 +50,9 @@ class Map{
         mappa=new char[h][w];
     }
 
-    void setVisible(ArrayList<Pellet> visiblePellet){
+    /*inserisce i pellet visibili nella matrice. 
+    i super pellet vengono inseriti come O mentre i pellet normali come o.*/
+    void setVisible(ArrayList<Pellet> visiblePellet){  
         this.visible=visiblePellet;
         
         for(Pellet p: this.visible){
@@ -71,19 +71,21 @@ class Map{
             mappa[p.y][p.x]='O';
         else
             mappa[p.y][p.x]='o';
-
     }
 
+    /*converte la riga passata in input da String a char ed inserite nella mappa*/
     void setRow(String row, int i){
         for(int j=0; j<width; j++)
             mappa[i][j]=row.charAt(j);
     }
 
+    /*stampa l'intera mappa'*/
     void stampa(){
         for(int i=0; i<height; i++)
             System.err.println(mappa[i]);
     }
 
+    /*controlla se nelle posizioni passate esiste un pellet*/
     boolean checkPellet(int x, int y){
         for(Pellet p: visible)
             if(p.x==x && p.y==y)
@@ -92,6 +94,7 @@ class Map{
     }
 }
 
+/*classe Pacman, gestisce i nostri pacman*/
 class Pacman{
 
     int pacId;
@@ -100,13 +103,13 @@ class Pacman{
     String typeId;
     int speedTurnsLeft;
     int abilityCooldown;
-    ArrayList<Direction> possiblesMoves;
-    Direction choice;
-    Cell explore;
-    String action;
-    String switchTo;
-    boolean iChoose;
-    boolean locked;
+    ArrayList<Direction> possiblesMoves; //le direzioni su, giù, sinistra e destra.
+    Direction choice; //direzione scelta, se null il pacman esplora la mappa. 
+    Cell explore;   //cella da esplorare dal pacman.
+    String action;  //azione intrapresa dal pacman (MOVE, SPEED, SWITCH, WAIT).
+    String switchTo; //variabilew che indica in cosa il pacman si deve trasformare.
+    boolean iChoose; //buleana che indica se il pacman ha scelto una direzione.
+    boolean locked; //buleana che indica se il pacman è rimasto boccato nella stessa posizione per più turni. collisione?
 
     public Pacman(int pacId, int x, int y, String typeId, int speedTurnsLeft, int abilityCooldown) {
         this.pacId = pacId;
@@ -129,17 +132,20 @@ class Pacman{
         this.locked=b;
     }
 
+    /*restituisce la distanza fra il pacman e un'altra posizione*/
     double distance(int x2,int y2)
     {
         return java.lang.Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));
     }
 
+    /*restituisce se un un altro pacman e vicino al pacman corrente*/
     boolean isNear(Pacman p, int i){
         int d1=this.x-p.x;
         int d2=this.y-p.y;
         return ((d1<=i && d1>=-i) && (d2<=i && d2>=-i));
     }
 
+    /*metodo che sceglie la direzione migliore per il pacman*/
     void bestDirection(){
         double max=0.0f;
         for(Direction d: possiblesMoves){
@@ -151,7 +157,7 @@ class Pacman{
             }
         }
     }
-    
+    /*metodo che, dato un avversario, il nostro pacman sceglie in cosa trasformarsi per vincere uno scontro.*/
     void tryToWin(Pacman oppo) {
     	if(oppo.typeId.equals("SCISSORS")){
             this.action="SWITCH";
@@ -169,6 +175,7 @@ class Pacman{
         }    		
     }
 
+    /*metodo uguale al bestDirection(), ma evita di andare nella direzione passata*/
     void changeDirection(String notDir){
         double max=0.0f;
         for(Direction d: possiblesMoves){
@@ -182,6 +189,7 @@ class Pacman{
     }
 }
 
+/*classe direction, serve per gestire la direzione scelta dei pacman*/
 class Direction{
     String direction;
     double pointsOnTime;
@@ -200,6 +208,7 @@ class Direction{
         pointsOnTime=(Double)pointsOnTime/time;
     }
 
+    /*metodo che decide una direzione in base a dove si trova un avversario*/
     void setDirection(Pacman my, Pacman op){
         if(my.y==op.y){
             if(my.x-op.x>=1)
@@ -216,19 +225,20 @@ class Direction{
     }
 }
 
+/*classe core che gestisce la maggior parte della logica*/
 class GameManager{
-    Map board;
-    ArrayList<Pacman> myPacmans;
-    ArrayList<Pacman> opponents;
+    Map board; //mappa
+    ArrayList<Pacman> myPacmans;//lista dei nostri pacman
+    ArrayList<Pacman> opponents;//lista dei pacman avversari
     
-    ArrayList<Pacman> myLastPosition;
-    ArrayList<Pacman> opponentsLastPosition;
+    ArrayList<Pacman> myLastPosition;//lista dei nostri pacman del turno precedente
+    ArrayList<Pacman> opponentsLastPosition;//lista dei pacman avversari del turno precedente
 
-    ArrayList<Pellet> superPellets;
+    ArrayList<Pellet> superPellets; //lista dei super pellets
     
-    int myScore;
-    int opponentScore;
-    String output;
+    int myScore;//nostro punteggio
+    int opponentScore;//punteggio avversario
+    String output;//stringa di output da passare ad ogni fine turno
 
     public GameManager(int w, int h){
         board=new Map(w, h);
@@ -269,6 +279,7 @@ class GameManager{
         board.addVisible(p);
     }
 
+    /*metodo che ripulisce tutto ciò che cambia fra un turno e l'altro, (es. lista dei pacman)*/
     void clearAll(){
         this.output="";
         myLastPosition=myPacmans;
@@ -279,6 +290,8 @@ class GameManager{
         superPellets=new ArrayList<Pellet>();
     }
 
+    /*i pacman contrasegnano la loro ultima posizione con un X sulla mappa 
+    per indicare che è stata già visitata la cella*/
     void clearPos(){
         if(myLastPosition!=null){
             for(Pacman p:myLastPosition){
@@ -291,6 +304,10 @@ class GameManager{
         }
     }
 
+    /*aggiorna la mappa ad ogni inizio turno, tutti i pacman cancellano i pellet 
+    che non esistono più dalla mappa e contano i punti che vedono in tutte le loro direzioni.
+    i pacman non contano i punti in una determinata oltre un alleato, se è presente, 
+    in quella direzione poiché potrebbe ostruire il loro cammino.*/
     void updateMap(){
 
         for(Pacman p: myPacmans){
@@ -387,6 +404,8 @@ class GameManager{
         }
     }
 
+
+    /*TODO*/
     void checkCollision(){
         if(myLastPosition!=null){
             for(Pacman p_curr: myPacmans){
@@ -423,6 +442,10 @@ class GameManager{
         }
     }
 
+    /*controlla se i pacman hanno scelto una direzione.
+    ciò non accade sempre poiché prima o poi i pellet scarsegiano
+    e non sono sempre visibili a tutti i pacman.
+    se il pacman non ha potuto effettuare una bestDirection(), lo si manda ad esplorare.*/
     void checkForNull(){
         for(Pacman p: myPacmans){
             if(p.iChoose==false && p.action.equals("")){
@@ -435,7 +458,18 @@ class GameManager{
         }
     }
     
-
+/*metodo che permette ai pacman di esplorare la mappa.
+i pacman controllano le loro celle adiacenti alla ricerca di pellet o celle 
+mai esploratre (ovvero che sono contrassegnate sulla mappa come spazio vuoto ' '),
+se non trovano celle da esplorare al primo tentativo, si ripete il metodo eseguendo 
+gli stessi controlli alle celle adiacenti al pacman e così via finché non
+viene trovata una cella. Quando è stata trovata la cella da esplorare si verifica che
+non sia già stata scelta da un altro pacman, se il controllo va a buon fine si 
+cerca una cella che permette di vedere in anticipo se effetivamente è presente 
+un pellet o meno, senza obbligare il pacman ad andare fino in fondo alla cella 
+per varificarlo. (es. sull mappa e presente un pelle alla fine di un corridoio 
+a vicolo cieco, al pacman per vedere il corridio intero basta arrivare 
+all'inizio di esso e se è presente un pellet lo raggiungerà con la bestDirection().')*/
 void explore(Pacman p){
         ArrayList<Cell> cell = new ArrayList<Cell>();
         ArrayList<Cell> visited = new ArrayList<Cell>();
@@ -522,6 +556,7 @@ void explore(Pacman p){
         p.action="MOVE";           
     }
 
+    /*metodo che indica la cella più vicina la pacman passato*/
     void closestCell(ArrayList<Cell> cells, Pacman p){
         if(cells.isEmpty()==false){
             double minDist=p.distance(cells.get(0).x, cells.get(0).y);
@@ -539,6 +574,7 @@ void explore(Pacman p){
         }
     }
 
+    /*controllo per verificare la presenza di una cella all'interno di un vettore di celle'*/
     boolean presente(ArrayList<Cell> cell, Cell c){
         for(Cell k: cell){
             if(k.x==c.x && k.y==c.y)
@@ -547,6 +583,7 @@ void explore(Pacman p){
         return false;
     }
 
+    /*metodo che permette ai nostri pacman di allontanarsi dagli avversari.*/
     void goAway(Pacman p, Pacman near){
         int i=1;
         if(p.speedTurnsLeft>0)
@@ -599,6 +636,10 @@ void explore(Pacman p){
         }
     }
     
+    /*metodo che controlla la presenza di un avversario o meno 
+    nelle vicinanze dei nostri pacman , in caso sia presente un 
+    avversario si contralla una serie di casistiche per permetterci 
+    di vincere un duello o di mettere in salvo i nostri pacman.*/
     void checkForFight() {
     	for(Pacman p: myPacmans) {
     		Pacman near=isOpponentNear(p);
@@ -637,6 +678,8 @@ void explore(Pacman p){
     	}
     }
     
+    /*dato un avversario e un nostro pacman, restituisca 1 se il nostro pacman vince 
+    -1 altrimenti, 0 in caso di pareggio*/
     int fightResult(Pacman my, Pacman oppo) {
     	if(my.typeId.equals(oppo.typeId))
     		return 0;
@@ -646,6 +689,7 @@ void explore(Pacman p){
     		return -1;
     }
     
+    /*verifica la presenza di un avversario nei dintorni di un nostro pacman*/
     Pacman isOpponentNear(Pacman p) {
     	Pacman op=null;
         int i=1;
@@ -660,6 +704,8 @@ void explore(Pacman p){
     	return op;
     }
 
+    /*dato un super pellet, cerca un pacman più vicino a lui. 
+    METODO NON IN USO*/
     void findPacman(Pellet p){
         ArrayList<Cell> cell = new ArrayList<Cell>();
         ArrayList<Cell> visited = new ArrayList<Cell>();
@@ -702,6 +748,7 @@ void explore(Pacman p){
         }
     }
 
+    /*verifica se una cella è un super pellet.*/
     boolean isSuperPellet(int x, int y){
         for(Pellet p: superPellets){
             if(p.x==x && p.y==y)
@@ -710,6 +757,8 @@ void explore(Pacman p){
         return false;
     }
 
+    /*se sono presenti super pellet sulla mappa , i pacman danno priorità a loro. 
+    METODO NON IN USO*/
     void checkForSuperPellets(){
         if(superPellets.isEmpty()==false){
             int count=0;
@@ -722,6 +771,8 @@ void explore(Pacman p){
         }
     }
 
+    /*metodo che in base all'action di ogni pacman genera una stringa 
+    che verrà data in output ogni fine turno.*/
     void genOutput(int turn){
         String temp="";
         for(Pacman p: myPacmans){
@@ -774,6 +825,7 @@ void explore(Pacman p){
         output=temp.substring(2,temp.length());
     }
 
+    /*attiva la speed di ogni pacman appena possibile.*/
     void activeSpeed(){
         for(Pacman p: myPacmans){
             if(p.abilityCooldown==0){
@@ -784,17 +836,17 @@ void explore(Pacman p){
 
     void play(int turn){
         //osserva e scegli
-        clearPos();
-        updateMap();
-        chooseDirection();
-        checkForNull();
+        clearPos(); //pulizia vecchie posizioni
+        updateMap(); //aggiornamento mappa
+        chooseDirection(); //scelta della miglior direzione
+        checkForNull(); //se scelta è null allora esplora
         //checkForSuperPellets();
-        checkCollision();
+        checkCollision(); //verifica di collisioni
         //check pacman directions        
-        checkForFight()
+        checkForFight() //verifica di possibile duello
 
-        activeSpeed();
-        genOutput(turn);
+        activeSpeed(); //attiva la speed se possibile
+        genOutput(turn); //genera l'output
     }
 }
 

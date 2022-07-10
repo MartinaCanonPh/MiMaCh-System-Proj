@@ -164,7 +164,7 @@ class Pacman{
     void bestDirection(){
         double max=0.0f;
         for(Direction d: possiblesMoves){
-            System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
+            //System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
             if(d.pointsOnTime>max){
                 max=d.pointsOnTime;
                 this.choice=d;
@@ -172,10 +172,10 @@ class Pacman{
                 this.iChoose=true;
             }
         }
-        if(this.choice==null)
-            System.err.println(" e non ho scelto nulla ");
-        else
-            System.err.println(" e vado verso " + this.choice.direction);
+        // if(this.choice==null)
+        //     System.err.println(" e non ho scelto nulla ");
+        // else
+        //     System.err.println(" e vado verso " + this.choice.direction);
     }
 
     void bestDirWithSpeed(){
@@ -203,10 +203,10 @@ class Pacman{
         double max=0.0f;
         //this.choice=null;
         for(Direction d: possiblesMoves){
-            System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
-            System.err.println("NOT: "+notDir);
+            //System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
+            //System.err.println("NOT: "+notDir);
             if(d.pointsOnTime>max && d.direction.equals(notDir)==false){
-                System.err.println("NOT: "+notDir+" NUOVA: "+d.direction);
+                //System.err.println("NOT: "+notDir+" NUOVA: "+d.direction);
                 max=d.pointsOnTime;
                 this.choice=d;
                 this.action="MOVE";
@@ -257,6 +257,8 @@ class GameManager{
     
     ArrayList<Pacman> myLastPosition;
     ArrayList<Pacman> opponentsLastPosition;
+
+    ArrayList<Pellet> superPellets;
     
     int myScore;
     int opponentScore;
@@ -266,6 +268,7 @@ class GameManager{
         board=new Map(w, h);
         myPacmans=new ArrayList<Pacman>();
         opponents=new ArrayList<Pacman>();
+        superPellets=new ArrayList<Pellet>();
         output="";
     }
 
@@ -295,6 +298,8 @@ class GameManager{
     }
 
     void addvisible(Pellet p){
+        if(p.value==10)
+            superPellets.add(p);
         board.addVisible(p);
     }
 
@@ -305,6 +310,7 @@ class GameManager{
         myPacmans=new ArrayList<Pacman>();
         opponents=new ArrayList<Pacman>();
         board.visible=new ArrayList<Pellet>();
+        superPellets=new ArrayList<Pellet>();
     }
 
     void clearPos(){
@@ -322,7 +328,7 @@ class GameManager{
     void updateMap(){
 
         for(Pacman p: myPacmans){
-            System.err.println("Sono p"+p.pacId+" e sono in update map");
+            //System.err.println("Sono p"+p.pacId+" e sono in update map");
             //board.mappa[p.y][p.x]='P';
             boolean up=true, down=true, right=true, left=true;
             int pointsUp=0, pointsDown=0, pointsRight=0, pointsLeft=0;
@@ -334,7 +340,7 @@ class GameManager{
                     if(board.mappa[y][p.x]=='#' || board.mappa[y][p.x]=='P'){
                         up=false;
                         p.possiblesMoves.add(new Direction("up", pointsUp, i));
-                        System.err.println(" e vedo sopra di me " + pointsUp + " punti in " + i + " turni");
+                        //System.err.println(" e vedo sopra di me " + pointsUp + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[y][p.x]=='o' || board.mappa[y][p.x]=='O') && board.checkPellet(p.x, y)==false){
@@ -356,7 +362,7 @@ class GameManager{
                     if(board.mappa[y][p.x]=='#' || board.mappa[y][p.x]=='P'){
                         down=false;
                         p.possiblesMoves.add(new Direction("down", pointsDown, i));
-                        System.err.println(" e vedo sotto di me " + pointsDown + " punti in " + i + " turni");
+                        //System.err.println(" e vedo sotto di me " + pointsDown + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[y][p.x]=='o' || board.mappa[y][p.x]=='O' ) && board.checkPellet(p.x, y)==false){
@@ -378,7 +384,7 @@ class GameManager{
                     if(board.mappa[p.y][x]=='#' || board.mappa[p.y][x]=='P'){
                         right=false;
                         p.possiblesMoves.add(new Direction("right", pointsRight, i));
-                        System.err.println(" e vedo a destra " + pointsRight + " punti in " + i + " turni");
+                        //System.err.println(" e vedo a destra " + pointsRight + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[p.y][x]=='o' || board.mappa[p.y][x]=='O') && board.checkPellet(x, p.y)==false){
@@ -400,7 +406,7 @@ class GameManager{
                     if(board.mappa[p.y][x]=='#' || board.mappa[p.y][x]=='P'){
                         left=false;
                         p.possiblesMoves.add(new Direction("left", pointsLeft, i));
-                        System.err.println(" e vedo a sinistra " + pointsLeft + " punti in " + i + " turni");
+                        //System.err.println(" e vedo a sinistra " + pointsLeft + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[p.y][x]=='o' || board.mappa[p.y][x]=='O') && board.checkPellet(x, p.y)==false){
@@ -430,7 +436,7 @@ class GameManager{
                     {
                         locked=true;
                         p_curr.setLocked(locked);
-                        System.err.println("Sono p"+p_curr.pacId+" e sono LOCKED ");
+                        //System.err.println("Sono p"+p_curr.pacId+" e sono LOCKED ");
                         break;
                     }
                 }
@@ -441,7 +447,7 @@ class GameManager{
                         if(p_curr.pacId!=p2.pacId && (p_curr.isNear(p2,1) || p_curr.isNear(p2, 2)) && p2.locked)
                         {
                             b=true;
-                            System.err.println("COLLISION con my: "+p_curr.pacId+" e "+p2.pacId);
+                            //System.err.println("COLLISION con my: "+p_curr.pacId+" e "+p2.pacId);
                             p2.action="WAIT";
                             break;
                         }
@@ -451,7 +457,7 @@ class GameManager{
                     for(Pacman op: opponents){
                         if(p_curr.isNear(op,2))
                         {
-                            System.err.println("COLLISION con op: "+p_curr.pacId+" e "+op.pacId);
+                            //System.err.println("COLLISION con op: "+p_curr.pacId+" e "+op.pacId);
                         }
                     }
                 }
@@ -461,7 +467,7 @@ class GameManager{
 
     void chooseDirection(){
         for(Pacman p: myPacmans){
-            System.err.print("Sono p"+p.pacId+":");
+            //System.err.print("Sono p"+p.pacId+":");
             p.bestDirection();
         }
     }
@@ -481,7 +487,7 @@ class GameManager{
     
 
 void explore(Pacman p){
-        System.err.println("Sono p"+p.pacId+" e sono in explore");
+        //System.err.println("Sono p"+p.pacId+" e sono in explore");
 
         ArrayList<Cell> cell = new ArrayList<Cell>();
         ArrayList<Cell> visited = new ArrayList<Cell>();
@@ -512,7 +518,7 @@ void explore(Pacman p){
                 // else if(presente(visited, po)==false)
                 //     cell.add(po);
                 if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
-                    System.err.println("EXPLORE "+po.x+"-"+po.y);
+                    //System.err.println("EXPLORE "+po.x+"-"+po.y);
                     boolean ok=true;
                     for(Pacman pac:myPacmans){
                         if(pac.pacId!=p.pacId && pac.explore!= null && (pac.explore.x==po.x && pac.explore.y==po.y))
@@ -717,6 +723,70 @@ void explore(Pacman p){
     	return op;
     }
 
+    void findPacman(Pellet p){
+        ArrayList<Cell> cell = new ArrayList<Cell>();
+        ArrayList<Cell> visited = new ArrayList<Cell>();
+        cell.add(new Cell(p.x, p.y));
+        boolean found=false;
+        while(found==false){
+            ArrayList<Cell> temp = new ArrayList<Cell>();
+
+            for(Cell c: cell){
+                if(board.mappa[Math.floorMod(c.y-1, board.height)][c.x]!='#')
+                    temp.add(new Cell(c.x, Math.floorMod(c.y-1, board.height)));
+                if(board.mappa[Math.floorMod(c.y+1, board.height)][c.x]!='#')
+                    temp.add(new Cell(c.x, Math.floorMod(c.y+1, board.height)));
+                if(board.mappa[c.y][Math.floorMod(c.x+1, board.width)]!='#')
+                    temp.add(new Cell(Math.floorMod(c.x+1, board.width), c.y));
+                if(board.mappa[c.y][Math.floorMod(c.x-1, board.width)]!='#')
+                    temp.add(new Cell(Math.floorMod(c.x-1, board.width), c.y));
+            }
+            visited.addAll(cell);
+            cell=new ArrayList<Cell>();
+
+            for(Cell po: temp){
+                if(board.mappa[po.y][po.x]=='P'){ //controlla se il pacman è vivo
+                    // boolean ok=true;
+                    // Pacman myP=null;
+                    for(Pacman pac:myPacmans){
+                        if(pac.x==po.x && pac.y==po.y){
+                            if(pac.explore==null || (pac.explore!= null && isSuperPellet(pac.explore.x, pac.explore.y)==false)){
+                                pac.explore=new Cell(p.x, p.y);
+                                found=true;
+                                pac.choice=null;
+                                System.err.println("PACID: "+pac.pacId+" CELL: "+pac.explore.x+"-"+pac.explore.y);
+                                pac.action="MOVE";
+                                break; 
+                            }
+                        }                              
+                    }
+                }
+                if(presente(visited, po)==false)
+                    cell.add(po);
+            }
+        }
+    }
+
+    boolean isSuperPellet(int x, int y){
+        for(Pellet p: superPellets){
+            if(p.x==x && p.y==y)
+                return true;
+        }
+        return false;
+    }
+
+    void checkForSuperPellets(){
+        if(superPellets.isEmpty()==false){
+            int count=0;
+            for(Pellet p: superPellets){
+                if(count<myPacmans.size()){
+                    findPacman(p);
+                    count++;
+                }        
+            }
+        }
+    }
+
     void genOutput(int turn){
         String temp="";
         for(Pacman p: myPacmans){
@@ -783,6 +853,7 @@ void explore(Pacman p){
         updateMap();
         chooseDirection();
         checkForNull();
+        //checkForSuperPellets();
         checkCollision();
         //check pacman directions        
         checkForFight(); // TODO se vediamo un nemico nel corridoio entro 4/3 caselle, controllare se ha il cooldown dell'abilita' !=0 

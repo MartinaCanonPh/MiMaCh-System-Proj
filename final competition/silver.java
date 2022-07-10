@@ -41,7 +41,6 @@ class Pellet{
 
 class Map{
     char[][] mappa;
-    //int[][] mappa;
     int width;
     int height;
     ArrayList<Pellet> visible;
@@ -51,26 +50,17 @@ class Map{
         this.width=w;
         this.height=h;
         mappa=new char[h][w];
-        //mappa=new int[h][w]
     }
 
     void setVisible(ArrayList<Pellet> visiblePellet){
         this.visible=visiblePellet;
         
-        //if char mappa
         for(Pellet p: this.visible){
             if(p.value==10)
                 mappa[p.y][p.x]='O';
             else
             mappa[p.y][p.x]='o';
         }
-
-        /*if int mappa
-        for(Pellet p: this.visible){
-            mappa[p.y][p.x]=p.value;
-        }
-        */
-
     }
 
     void addVisible(Pellet p){
@@ -85,19 +75,8 @@ class Map{
     }
 
     void setRow(String row, int i){
-        //if char mappa
         for(int j=0; j<width; j++)
             mappa[i][j]=row.charAt(j);
-        
-        /* if int mappa
-        for(int j=0; j<width; j++){
-            if(row.charAt(j)=='#')
-                mappa[i][j]=11;
-            else
-                mappa[i][j]=-1;
-
-        }
-        */
     }
 
     void stampa(){
@@ -124,7 +103,7 @@ class Pacman{
     ArrayList<Direction> possiblesMoves;
     Direction choice;
     Cell explore;
-    String action; //agiungere una variabile intera pe ril controllo in gen output e non usare la stringa stessa.
+    String action;
     String switchTo;
     boolean iChoose;
     boolean locked;
@@ -164,7 +143,6 @@ class Pacman{
     void bestDirection(){
         double max=0.0f;
         for(Direction d: possiblesMoves){
-            //System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
             if(d.pointsOnTime>max){
                 max=d.pointsOnTime;
                 this.choice=d;
@@ -172,14 +150,6 @@ class Pacman{
                 this.iChoose=true;
             }
         }
-        // if(this.choice==null)
-        //     System.err.println(" e non ho scelto nulla ");
-        // else
-        //     System.err.println(" e vado verso " + this.choice.direction);
-    }
-
-    void bestDirWithSpeed(){
-        
     }
     
     void tryToWin(Pacman oppo) {
@@ -201,12 +171,8 @@ class Pacman{
 
     void changeDirection(String notDir){
         double max=0.0f;
-        //this.choice=null;
         for(Direction d: possiblesMoves){
-            //System.err.println(" verso " + d.direction+" il rapporto è "+d.pointsOnTime);
-            //System.err.println("NOT: "+notDir);
             if(d.pointsOnTime>max && d.direction.equals(notDir)==false){
-                //System.err.println("NOT: "+notDir+" NUOVA: "+d.direction);
                 max=d.pointsOnTime;
                 this.choice=d;
                 this.action="MOVE";
@@ -328,8 +294,6 @@ class GameManager{
     void updateMap(){
 
         for(Pacman p: myPacmans){
-            //System.err.println("Sono p"+p.pacId+" e sono in update map");
-            //board.mappa[p.y][p.x]='P';
             boolean up=true, down=true, right=true, left=true;
             int pointsUp=0, pointsDown=0, pointsRight=0, pointsLeft=0;
             int i=1;
@@ -340,7 +304,6 @@ class GameManager{
                     if(board.mappa[y][p.x]=='#' || board.mappa[y][p.x]=='P'){
                         up=false;
                         p.possiblesMoves.add(new Direction("up", pointsUp, i));
-                        //System.err.println(" e vedo sopra di me " + pointsUp + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[y][p.x]=='o' || board.mappa[y][p.x]=='O') && board.checkPellet(p.x, y)==false){
@@ -362,7 +325,6 @@ class GameManager{
                     if(board.mappa[y][p.x]=='#' || board.mappa[y][p.x]=='P'){
                         down=false;
                         p.possiblesMoves.add(new Direction("down", pointsDown, i));
-                        //System.err.println(" e vedo sotto di me " + pointsDown + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[y][p.x]=='o' || board.mappa[y][p.x]=='O' ) && board.checkPellet(p.x, y)==false){
@@ -384,7 +346,6 @@ class GameManager{
                     if(board.mappa[p.y][x]=='#' || board.mappa[p.y][x]=='P'){
                         right=false;
                         p.possiblesMoves.add(new Direction("right", pointsRight, i));
-                        //System.err.println(" e vedo a destra " + pointsRight + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[p.y][x]=='o' || board.mappa[p.y][x]=='O') && board.checkPellet(x, p.y)==false){
@@ -406,7 +367,6 @@ class GameManager{
                     if(board.mappa[p.y][x]=='#' || board.mappa[p.y][x]=='P'){
                         left=false;
                         p.possiblesMoves.add(new Direction("left", pointsLeft, i));
-                        //System.err.println(" e vedo a sinistra " + pointsLeft + " punti in " + i + " turni");
                     }
 
                     else if((board.mappa[p.y][x]=='o' || board.mappa[p.y][x]=='O') && board.checkPellet(x, p.y)==false){
@@ -436,7 +396,6 @@ class GameManager{
                     {
                         locked=true;
                         p_curr.setLocked(locked);
-                        //System.err.println("Sono p"+p_curr.pacId+" e sono LOCKED ");
                         break;
                     }
                 }
@@ -447,19 +406,12 @@ class GameManager{
                         if(p_curr.pacId!=p2.pacId && (p_curr.isNear(p2,1) || p_curr.isNear(p2, 2)) && p2.locked)
                         {
                             b=true;
-                            //System.err.println("COLLISION con my: "+p_curr.pacId+" e "+p2.pacId);
                             p2.action="WAIT";
                             break;
                         }
                     }
                     if(!b)
-                        p_curr.action="WAIT"; //p_curr.changeDirection(p_curr.choice.direction);
-                    for(Pacman op: opponents){
-                        if(p_curr.isNear(op,2))
-                        {
-                            //System.err.println("COLLISION con op: "+p_curr.pacId+" e "+op.pacId);
-                        }
-                    }
+                        p_curr.action="WAIT";
                 }
             }
         }
@@ -467,14 +419,12 @@ class GameManager{
 
     void chooseDirection(){
         for(Pacman p: myPacmans){
-            //System.err.print("Sono p"+p.pacId+":");
             p.bestDirection();
         }
     }
 
     void checkForNull(){
         for(Pacman p: myPacmans){
-            //System.err.println("Sono p"+p.pacId+" e sono in check for null e la mia bilita ha " + p.abilityCooldown);
             if(p.iChoose==false && p.action.equals("")){
                 if(p.abilityCooldown==0)
             	    p.action="SPEED";
@@ -487,8 +437,6 @@ class GameManager{
     
 
 void explore(Pacman p){
-        //System.err.println("Sono p"+p.pacId+" e sono in explore");
-
         ArrayList<Cell> cell = new ArrayList<Cell>();
         ArrayList<Cell> visited = new ArrayList<Cell>();
         cell.add(new Cell(p.x, p.y));
@@ -510,15 +458,7 @@ void explore(Pacman p){
             cell=new ArrayList<Cell>();
 
             for(Cell po: temp){
-                // if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
-                //     System.err.println("EXPLORE "+po.x+"-"+po.y);
-                //     p.explore=new Cell(po.x, po.y);
-                //     found=true;
-                // }
-                // else if(presente(visited, po)==false)
-                //     cell.add(po);
                 if(board.mappa[po.y][po.x]=='o' || board.mappa[po.y][po.x]=='O' || board.mappa[po.y][po.x]==' '){
-                    //System.err.println("EXPLORE "+po.x+"-"+po.y);
                     boolean ok=true;
                     for(Pacman pac:myPacmans){
                         if(pac.pacId!=p.pacId && pac.explore!= null && (pac.explore.x==po.x && pac.explore.y==po.y))
@@ -532,7 +472,6 @@ void explore(Pacman p){
                 else if(presente(visited, po)==false)
                     cell.add(po);
             }
-            //cell=temp;
         }
         ArrayList<Cell> celle=new ArrayList<Cell>();
         if(p.explore!=null){
@@ -662,10 +601,8 @@ void explore(Pacman p){
     
     void checkForFight() {
     	for(Pacman p: myPacmans) {
-            //System.err.println("Sono p"+p.pacId+" e sono in check for fight");
     		Pacman near=isOpponentNear(p);
     		if(near!=null) {
-                //System.err.println("Sono p"+p.pacId+" e il mio near è " + near.pacId);
     			if(p.abilityCooldown==0 && near.abilityCooldown!=0) {
     				if(fightResult(p, near)==1){ //vittoria
     					p.action="MOVE";
@@ -745,9 +682,7 @@ void explore(Pacman p){
             cell=new ArrayList<Cell>();
 
             for(Cell po: temp){
-                if(board.mappa[po.y][po.x]=='P'){ //controlla se il pacman è vivo
-                    // boolean ok=true;
-                    // Pacman myP=null;
+                if(board.mappa[po.y][po.x]=='P'){ 
                     for(Pacman pac:myPacmans){
                         if(pac.x==po.x && pac.y==po.y){
                             if(pac.explore==null || (pac.explore!= null && isSuperPellet(pac.explore.x, pac.explore.y)==false)){
@@ -856,8 +791,7 @@ void explore(Pacman p){
         //checkForSuperPellets();
         checkCollision();
         //check pacman directions        
-        checkForFight(); // TODO se vediamo un nemico nel corridoio entro 4/3 caselle, controllare se ha il cooldown dell'abilita' !=0 
-        				 //e fare la differenza fra le posizioni passate e correnti, perche' potrebbe mangiarci senza darci il tempo di trasformarci
+        checkForFight()
 
         activeSpeed();
         genOutput(turn);
@@ -924,8 +858,7 @@ class Player {
             }
             gm.play(turn);
             //gm.stampaMappa();
-            // Write an action using System.out.println()
-            // To debug: System.err.println("Debug messages...");
+            
 
             System.out.println(gm.output); // MOVE <pacId> <x> <y>
             gm.clearAll();
